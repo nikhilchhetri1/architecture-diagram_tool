@@ -1,0 +1,15 @@
+node_modules/
+.env
+.DS_Store
+npm-debug.log*
+dist/
+coverage/
+*.log
+tmp/
+*.tgz
+package-lock.json
+
+# Diagram render scratch/probe files (kept out of version control)
+_*-probe.mmd
+_*-probe.png
+_*-probe.svg

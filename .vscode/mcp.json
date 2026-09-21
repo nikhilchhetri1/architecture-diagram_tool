@@ -1,0 +1,13 @@
+{
+  "servers": {
+    "arch-diagram": {
+      "command": "node",
+      "args": ["server.js"],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "GITHUB_ORG": "rentacenter",
+        "DOTENVX_QUIET": "true"
+      }
+    }
+  }
+}

@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" agent="architecture-diagram-agent" version="24.0.0">
+  <diagram name="Customer Module - Current State (Detailed)" id="customer-module-current-architecture">
+    <mxGraphModel dx="1800" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="4000" pageHeight="3100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ===================== LAYER BACKGROUNDS (non-parented, absolute coords) ===================== -->
+        <mxCell id="g_experience" value="Experience &amp; Identity — Store Associate Browser, CDN, Auth" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FBFD;strokeColor=#BCCBD8;verticalAlign=top;align=left;fontSize=18;fontStyle=1;spacingLeft=14;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="3920" height="620" as="geometry" />
+        </mxCell>
+        <mxCell id="g_api" value="API Boundary — BFF and Core Customer API Gateways" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FBFD;strokeColor=#BCCBD8;verticalAlign=top;align=left;fontSize=18;fontStyle=1;spacingLeft=14;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="700" width="3920" height="350" as="geometry" />
+        </mxCell>
+        <mxCell id="g_bff" value="racpad_customer BFF — per-route AWS Lambda handlers (Node.js 20.x)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FBFD;strokeColor=#BCCBD8;verticalAlign=top;align=left;fontSize=18;fontStyle=1;spacingLeft=14;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1090" width="3920" height="350" as="geometry" />
+        </mxCell>
+        <mxCell id="g_core" value="es_customer Core Service — ECS Fargate (Controller → Service → Repository)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FBFD;strokeColor=#BCCBD8;verticalAlign=top;align=left;fontSize=18;fontStyle=1;spacingLeft=14;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1480" width="3920" height="350" as="geometry" />
+        </mxCell>
+        <mxCell id="g_data" value="Data &amp; Resilience State" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FBFD;strokeColor=#BCCBD8;verticalAlign=top;align=left;fontSize=18;fontStyle=1;spacingLeft=14;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1870" width="3920" height="350" as="geometry" />
+        </mxCell>
+        <mxCell id="g_platform" value="External Integrations &amp; Platform Controls" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FBFD;strokeColor=#BCCBD8;verticalAlign=top;align=left;fontSize=18;fontStyle=1;spacingLeft=14;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="2260" width="3920" height="400" as="geometry" />
+        </mxCell>
+        <mxCell id="g_legend" value="Legend" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FBFD;strokeColor=#BCCBD8;verticalAlign=top;align=left;fontSize=18;fontStyle=1;spacingLeft=14;spacingTop=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="2690" width="1300" height="330" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== L1: EXPERIENCE & IDENTITY ===================== -->
+        <mxCell id="n_browser" value="Store associate browser&lt;br&gt;Customer SPA — React 17.0.2&lt;br&gt;AWS Amplify Auth 4.2.1" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#232F3E;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.user;" vertex="1" parent="1">
+          <mxGeometry x="130" y="160" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="n_cloudfront" value="Amazon CloudFront&lt;br&gt;HTTPS SPA distribution" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cloudfront;" vertex="1" parent="1">
+          <mxGeometry x="450" y="160" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="n_lambda_edge" value="Lambda@Edge — Node.js 20.x&lt;br&gt;origin-request: rewrite to index.html" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="750" y="160" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="n_s3" value="Amazon S3&lt;br&gt;Customer React SPA origin bucket" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#7AA116;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.s3;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="160" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="n_cognito" value="Amazon Cognito User Pool&lt;br&gt;RACPad authentication (JWT issuance)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#DD344C;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cognito;" vertex="1" parent="1">
+          <mxGeometry x="1650" y="160" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="n_okta" value="Okta&lt;br&gt;SAML identity provider federated&lt;br&gt;into Cognito user pool" style="shape=cloud;whiteSpace=wrap;html=1;fillColor=#FDEAEA;strokeColor=#C0392B;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1980" y="170" width="320" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== L2: API BOUNDARY ===================== -->
+        <mxCell id="n_bff_api" value="Amazon API Gateway&lt;br&gt;RACPad Customer BFF API" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#E7157B;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.api_gateway;" vertex="1" parent="1">
+          <mxGeometry x="150" y="820" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="n_bff_authorizer" value="Custom Lambda request authorizer&lt;br&gt;JWT Authorization header; 3600 s TTL" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="470" y="820" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="n_core_api" value="Amazon API Gateway&lt;br&gt;es_customer core API&lt;br&gt;Cognito User Pool authorizer" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#E7157B;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.api_gateway;" vertex="1" parent="1">
+          <mxGeometry x="1650" y="820" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="n_vpc_link" value="API Gateway VPC Link v2&lt;br&gt;HTTP-proxy integration to ALB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF4DD;strokeColor=#B8860B;fontSize=12;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1970" y="810" width="280" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="n_alb" value="Application Load Balancer&lt;br&gt;HTTPS listener / ECS target group" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#8C4FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.application_load_balancer;" vertex="1" parent="1">
+          <mxGeometry x="2350" y="820" width="78" height="78" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== L3: BFF LAMBDA HANDLERS (one per representative route) ===================== -->
+        <mxCell id="n_lambda_create" value="CreateCustomer Lambda&lt;br&gt;Node.js 20.x&lt;br&gt;POST /customer/createcustomer" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="150" y="1210" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="n_lambda_update" value="UpdateCustomerInfo Lambda&lt;br&gt;Node.js 20.x&lt;br&gt;PUT /customer/update/:id/:pageType" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="470" y="1210" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="n_lambda_address" value="GetCustomerAddress Lambda&lt;br&gt;Node.js 20.x&lt;br&gt;GET customer address" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="790" y="1210" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="n_lambda_webleads" value="GetWebLeads Lambda&lt;br&gt;Node.js 20.x&lt;br&gt;POST getweblead" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="1210" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="n_lambda_validateaddr" value="ValidateAddress Lambda&lt;br&gt;Node.js 20.x&lt;br&gt;address-doctor / Google validation" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="1430" y="1210" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="n_lambda_refund" value="SalesLeadRefund Lambda&lt;br&gt;Node.js 20.x&lt;br&gt;POST refund (RCP)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="1750" y="1210" width="78" height="78" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== L4: CORE SERVICE (ECS Fargate; Controller/Service/Repository) ===================== -->
+        <mxCell id="n_ecs" value="es_customer core service&lt;br&gt;Amazon ECS on Fargate — Node.js / Express&lt;br&gt;VPC-attached; X-Ray daemon sidecar" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ecs;" vertex="1" parent="1">
+          <mxGeometry x="150" y="1600" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="n_controllers" value="Controllers&lt;br&gt;CreateCustomerCtrl, UpdateCustomerCtrl,&lt;br&gt;ManageRiskAssessmentCtrl" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EAFBEA;strokeColor=#2F9E44;fontSize=12;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="470" y="1600" width="340" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="n_services" value="Services&lt;br&gt;CreateCustomerService, UpdateCustomerService,&lt;br&gt;ManageRiskAssessmentService" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EAFBEA;strokeColor=#2F9E44;fontSize=12;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="860" y="1600" width="340" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="n_repositories" value="Repositories&lt;br&gt;CreateCustomerRepository / UpdateCustomerRepository (TypeORM)&lt;br&gt;ReferenceDataRepository / RiskAssessmentRepository (pg client)&lt;br&gt;GcdbCustomerRepository, KeycloakRepository" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EAFBEA;strokeColor=#2F9E44;fontSize=12;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1250" y="1600" width="380" height="130" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== L5: DATA & RESILIENCE STATE ===================== -->
+        <mxCell id="n_rds_proxy" value="Amazon RDS Proxy&lt;br&gt;reader and writer endpoints" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EAFBEA;strokeColor=#2F9E44;fontSize=12;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="470" y="2000" width="280" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="n_postgres" value="Amazon RDS — PostgreSQL&lt;br&gt;version not identified in reviewed evidence" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#527FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.rds_postgresql_instance;" vertex="1" parent="1">
+          <mxGeometry x="860" y="2000" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="n_circuit_breaker" value="Amazon DynamoDB&lt;br&gt;shared circuit-breaker table" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#527FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.dynamodb;" vertex="1" parent="1">
+          <mxGeometry x="1250" y="2000" width="78" height="78" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== L6: EXTERNAL INTEGRATIONS & PLATFORM CONTROLS ===================== -->
+        <mxCell id="n_gcdb" value="GCDB Customer API&lt;br&gt;(external) create / update customer record&lt;br&gt;owning service &amp; data engine not identified" style="shape=cloud;whiteSpace=wrap;html=1;fillColor=#FDEAEA;strokeColor=#C0392B;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="150" y="2390" width="300" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="n_keycloak" value="Keycloak&lt;br&gt;(external) OAuth2 client credentials&lt;br&gt;admin user / email operations" style="shape=cloud;whiteSpace=wrap;html=1;fillColor=#FDEAEA;strokeColor=#C0392B;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="470" y="2390" width="300" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="n_ess_gateway" value="Enterprise ESS Gateway API&lt;br&gt;(external) weblead / legacy customer services" style="shape=cloud;whiteSpace=wrap;html=1;fillColor=#FDEAEA;strokeColor=#C0392B;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="790" y="2390" width="300" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="n_rac_refund" value="RAC Refund API&lt;br&gt;(external) sales lead refund (RCP)" style="shape=cloud;whiteSpace=wrap;html=1;fillColor=#FDEAEA;strokeColor=#C0392B;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="2390" width="300" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="n_google_addr" value="Google Address Validation API&lt;br&gt;(external)" style="shape=cloud;whiteSpace=wrap;html=1;fillColor=#FDEAEA;strokeColor=#C0392B;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1430" y="2390" width="300" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="n_cms_addr" value="CMS / Mule Address Doctor API&lt;br&gt;(external, SOAP)" style="shape=cloud;whiteSpace=wrap;html=1;fillColor=#FDEAEA;strokeColor=#C0392B;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1750" y="2390" width="300" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="n_bff_secrets" value="AWS Secrets Manager&lt;br&gt;BFF app secret (env-application)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#DD344C;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.secrets_manager;" vertex="1" parent="1">
+          <mxGeometry x="2070" y="2390" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="n_shared_secrets" value="AWS Secrets Manager&lt;br&gt;shared ESS SM secret — Keycloak client" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#DD344C;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.secrets_manager;" vertex="1" parent="1">
+          <mxGeometry x="2390" y="2390" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="n_cloudwatch" value="Amazon CloudWatch Logs" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#E7157B;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cloudwatch;" vertex="1" parent="1">
+          <mxGeometry x="2710" y="2390" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="n_xray" value="AWS X-Ray&lt;br&gt;tracing (Lambda + ECS daemon)" style="sketch=0;outlineConnect=0;fontColor=#232F3E;fillColor=#E7157B;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.xray;" vertex="1" parent="1">
+          <mxGeometry x="3030" y="2390" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="n_cicd" value="GitHub Actions CI/CD&lt;br&gt;shared RAC CI/CD workflow&lt;br&gt;production deploy option" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F0FB;strokeColor=#6C4BB8;dashed=1;fontSize=12;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="3350" y="2400" width="340" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== EDGES ===================== -->
+        <!-- L1 internal -->
+        <mxCell id="e_load_spa" value="loads SPA" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="n_browser" target="n_cloudfront">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_edge_request" value="origin request" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;dashed=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="n_cloudfront" target="n_lambda_edge">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_s3_origin" value="S3 origin" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=1;" edge="1" parent="1" source="n_cloudfront" target="n_s3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="489" y="480" />
+              <mxPoint x="1089" y="480" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_signin" value="authenticate" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;startArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=1;" edge="1" parent="1" source="n_browser" target="n_cognito">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="169" y="560" />
+              <mxPoint x="1689" y="560" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_okta_federation" value="SAML federation" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;startArrow=block;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="n_cognito" target="n_okta">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- L1 -> L2 -->
+        <mxCell id="e_client_bff" value="Bearer API calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;startArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="n_browser" target="n_bff_api">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- L2 internal -->
+        <mxCell id="e_bff_authorize" value="authorize" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;dashed=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="n_bff_api" target="n_bff_authorizer">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_core_vpc_link" value="HTTP proxy" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="n_core_api" target="n_vpc_link">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_vpc_alb" value="VPC Link v2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="n_vpc_link" target="n_alb">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- L2 -> L3: BFF API Gateway invokes each Lambda -->
+        <mxCell id="e_invoke_create" value="invoke" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;exitX=0.15;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="n_bff_api" target="n_lambda_create">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_invoke_update" value="invoke" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;exitX=0.3;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="n_bff_api" target="n_lambda_update">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="189" y="1060" />
+              <mxPoint x="509" y="1060" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_invoke_address" value="invoke" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;exitX=0.45;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="n_bff_api" target="n_lambda_address">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="200" y="1065" />
+              <mxPoint x="829" y="1065" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_invoke_webleads" value="invoke" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;exitX=0.6;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="n_bff_api" target="n_lambda_webleads">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="1070" />
+              <mxPoint x="1149" y="1070" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_invoke_validateaddr" value="invoke" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;exitX=0.75;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="n_bff_api" target="n_lambda_validateaddr">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="220" y="1075" />
+              <mxPoint x="1469" y="1075" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_invoke_refund" value="invoke" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;exitX=0.9;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="n_bff_api" target="n_lambda_refund">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="230" y="1080" />
+              <mxPoint x="1789" y="1080" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- L3 -> L2: BFF handlers call the core Customer API Gateway -->
+        <mxCell id="e_create_core" value="POST customer/cust/manage" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;exitX=0.5;exitY=0;entryX=0.2;entryY=1;" edge="1" parent="1" source="n_lambda_create" target="n_core_api">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="189" y="1060" />
+              <mxPoint x="1665" y="1060" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_update_core" value="PUT customer/manage/:id (inferred)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;dashed=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" edge="1" parent="1" source="n_lambda_update" target="n_core_api">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="509" y="1065" />
+              <mxPoint x="1689" y="1065" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_address_core" value="GET customer address (inferred)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;dashed=1;exitX=0.5;exitY=0;entryX=0.8;entryY=1;" edge="1" parent="1" source="n_lambda_address" target="n_core_api">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="829" y="1070" />
+              <mxPoint x="1713" y="1070" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- L2 -> L4: ALB routes to ECS Fargate task -->
+        <mxCell id="e_alb_ecs" value="routes to Fargate task" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="n_alb" target="n_ecs">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2389" y="1560" />
+              <mxPoint x="189" y="1560" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- L4 internal: Controller -> Service -> Repository -->
+        <mxCell id="e_ecs_controllers" value="hosts" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="n_ecs" target="n_controllers">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_controllers_services" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="n_controllers" target="n_services">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_services_repositories" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="n_services" target="n_repositories">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- L4 -> L5: Repositories to data stores -->
+        <mxCell id="e_repo_rds" value="TypeORM / pg client" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;exitX=0.3;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="n_repositories" target="n_rds_proxy">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_proxy_postgres" value="PostgreSQL" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="n_rds_proxy" target="n_postgres">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_repo_circuit" value="circuit-breaker state" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="n_repositories" target="n_circuit_breaker">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- L4 -> L6: Repositories to external integrations (clear-column drop then jog) -->
+        <mxCell id="e_repo_gcdb" value="create / update customer" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;exitX=0.1;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="n_repositories" target="n_gcdb">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1288" y="1850" />
+              <mxPoint x="1288" y="2340" />
+              <mxPoint x="300" y="2340" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_repo_keycloak" value="admin user / email operations" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;exitX=0.25;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="n_repositories" target="n_keycloak">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1345" y="1860" />
+              <mxPoint x="1345" y="2350" />
+              <mxPoint x="620" y="2350" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_repo_shared_secrets" value="get Keycloak client secret" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;exitX=0.6;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="n_repositories" target="n_shared_secrets">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1478" y="1840" />
+              <mxPoint x="1478" y="2330" />
+              <mxPoint x="2429" y="2330" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- L3 -> L6: BFF Lambdas to external integrations (right margin lane) -->
+        <mxCell id="e_webleads_ess" value="POST payment/weblead/list" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;exitX=1;exitY=0.5;entryX=0.5;entryY=0;" edge="1" parent="1" source="n_lambda_webleads" target="n_ess_gateway">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1229" y="1249" />
+              <mxPoint x="3760" y="1249" />
+              <mxPoint x="3760" y="2330" />
+              <mxPoint x="940" y="2330" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_refund_rac" value="POST /RCP sales lead refund" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;exitX=1;exitY=0.5;entryX=0.5;entryY=0;" edge="1" parent="1" source="n_lambda_refund" target="n_rac_refund">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1829" y="1265" />
+              <mxPoint x="3780" y="1265" />
+              <mxPoint x="3780" y="2350" />
+              <mxPoint x="1260" y="2350" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_validateaddr_google" value="validate address (Google)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;exitX=1;exitY=0.35;entryX=0.5;entryY=0;" edge="1" parent="1" source="n_lambda_validateaddr" target="n_google_addr">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1509" y="1235" />
+              <mxPoint x="3800" y="1235" />
+              <mxPoint x="3800" y="2360" />
+              <mxPoint x="1580" y="2360" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_validateaddr_cms" value="ans (Mule Address Doctor)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;exitX=1;exitY=0.65;entryX=0.5;entryY=0;" edge="1" parent="1" source="n_lambda_validateaddr" target="n_cms_addr">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1509" y="1265" />
+              <mxPoint x="3820" y="1265" />
+              <mxPoint x="3820" y="2370" />
+              <mxPoint x="1900" y="2370" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Container-sourced secrets / observability / deploy edges -->
+        <mxCell id="e_bff_secrets" value="get BFF app secret" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;dashed=1;exitX=0.53;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="g_bff" target="n_bff_secrets">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_core_cloudwatch" value="logs" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;dashed=1;exitX=0.7;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="g_core" target="n_cloudwatch">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_core_xray" value="traces" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;dashed=1;exitX=0.78;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="g_core" target="n_xray">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_bff_xray" value="traces" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;dashed=1;exitX=0.78;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="g_bff" target="n_xray">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_deploy_experience" value="deploy" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;dashed=1;exitX=1;exitY=0.2;entryX=1;entryY=0.1;" edge="1" parent="1" source="n_cicd" target="g_experience">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="3760" y="2424" />
+              <mxPoint x="3760" y="102" />
+              <mxPoint x="3960" y="102" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_deploy_bff" value="deploy" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;dashed=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="n_cicd" target="g_bff">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="3760" y="2460" />
+              <mxPoint x="3760" y="1265" />
+              <mxPoint x="3960" y="1265" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_deploy_core" value="deploy" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=11;endArrow=block;dashed=1;exitX=1;exitY=0.8;entryX=1;entryY=0.5;" edge="1" parent="1" source="n_cicd" target="g_core">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="3760" y="2496" />
+              <mxPoint x="3760" y="1655" />
+              <mxPoint x="3960" y="1655" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ===================== LEGEND ===================== -->
+        <mxCell id="lg_experience" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#232F3E;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="80" y="2760" width="26" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_experience_label" value="Experience &amp; Identity (browser, CDN, auth)" style="text;html=1;align=left;verticalAlign=middle;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="120" y="2758" width="1140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_api" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF4DD;strokeColor=#B8860B;" vertex="1" parent="1">
+          <mxGeometry x="80" y="2805" width="26" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_api_label" value="API Boundary (BFF and core API gateways)" style="text;html=1;align=left;verticalAlign=middle;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="120" y="2803" width="1140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_service" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EAFBEA;strokeColor=#2F9E44;" vertex="1" parent="1">
+          <mxGeometry x="80" y="2850" width="26" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_service_label" value="Synchronous handlers / controllers / services / repositories" style="text;html=1;align=left;verticalAlign=middle;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="120" y="2848" width="1140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_platform" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDEAEA;strokeColor=#C0392B;" vertex="1" parent="1">
+          <mxGeometry x="80" y="2895" width="26" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_platform_label" value="External integrations / platform controls" style="text;html=1;align=left;verticalAlign=middle;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="120" y="2893" width="1140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_dash" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F0FB;strokeColor=#6C4BB8;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="2940" width="26" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_dash_label" value="Dashed edge: deployment, observability, or an inferred (not directly confirmed) call" style="text;html=1;align=left;verticalAlign=middle;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="120" y="2938" width="1200" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
