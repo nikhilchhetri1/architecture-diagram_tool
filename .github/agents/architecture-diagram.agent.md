@@ -71,9 +71,10 @@ never a diagram styled after guesswork about another module's rendered image.
 2. The user explicitly provided it as ground truth (e.g. "there is also an SQS queue between X and Y").
 
 ### STOP Triggers — pause and ask the user if:
-- You cannot find the resolved repo after `resolve_repo` + one `search_code`/`fetch_issue_context` attempt → ask the user for the exact repo name.
+- You cannot find the resolved repo after `resolve_repo` + one `search_code`/`fetch_issue_context` attempt → **do not draw a placeholder or "unverified" node** — stop and ask the user for the exact repo/service name. This diagram is used by support teams to investigate live incidents, so every node must be backed by evidence you actually read, never a guess or stand-in.
 - The user wants the new diagram to visually match an existing reference diagram/image, but the actual Mermaid **source** for that reference cannot be located in this workspace → say so explicitly and ask the user to supply the source `.mmd` file. Do not attempt to reverse-engineer exact layout/style from a rendered raster image or SVG alone.
 - Evidence is genuinely absent for a claimed integration (e.g. "is there a queue here?") → state "not found in reviewed evidence" in both the diagram (omit the node) and the evidence appendix (explicit negative-evidence row). Do not silently omit — record the absence.
+- A prior reference document (e.g. an older PDF/diagram provided by the user) shows a node/edge that you cannot confirm still exists in current code/IaC → do not carry it forward as fact. Mark it explicitly as "stale / not reverified" in the evidence appendix and omit it from the diagram unless the user confirms it is still accurate.
 
 ### Confidence Labeling
 Every evidence row must be tagged:
@@ -89,7 +90,7 @@ Every evidence row must be tagged:
 2. **Entry points & auth** — find the UI entry route/component and how identity/auth is established (Cognito/Okta/etc.) via `search_code` / `clone_and_search`.
 3. **API boundary** — `get_api_calls` on the frontend repo to enumerate every backend call the UI makes.
 4. **Backend wiring** — `clone_and_search` the backend repo(s) for IaC templates (CloudFormation/Terraform/SAM), CI/CD workflows, and handler entry files to confirm compute (Lambda/ECS/etc.), data stores, queues/streams, and downstream calls.
-5. **Resilience & observability** — search for circuit breakers, retries, DynamoDB/queue-based failover, CloudWatch/X-Ray/Lambda Insights wiring.
+5. **Resilience & observability** — search for circuit breakers, retries, DynamoDB/queue-based failover, CloudWatch/X-Ray/Lambda Insights wiring. Treat this step as **required**, not optional: this diagram is meant to be the go-to reference support teams use to investigate real issues, so capture and label (when evidenced) — log group / trace names, retry vs. no-retry behavior, API Gateway error response shapes (401/403/5xx), auth/authorizer failure paths, and the specific failure points of downstream dependency calls (e.g. "call to X fails with no retry").
 6. **Feature flags & config** — `find_feature_flags` where UI behavior is flag-gated.
 7. **Recent changes** — `get_recent_commits` / `get_commit_diff` on the relevant paths if the user says something recently changed, or if a diagram is being refreshed.
 8. **Reconcile** — cross-check every frontend call has a matching backend handler; flag anything mismatched or unresolved as an open item rather than guessing.
@@ -116,6 +117,55 @@ Group nodes into layers (adapt names to what evidence actually shows — do not 
 - Use the bundled `mermaid.config.json` and `puppeteer.config.json` in this folder for local rendering — no cloud account needed.
 - Include a legend explaining any color/shape coding.
 - Label every edge with what actually flows across it (API call, event, query) when evidence supports a label.
+
+### Anti-clutter layout rules (apply to every module diagram, not just complex ones)
+
+These rules exist because dense single-flowchart diagrams (e.g. many dashed edges fanning out from every node to
+shared platform services) become hard to read and lose their value as a troubleshooting reference. Full technical
+detail must still be retained — these rules govern **layout/grouping only**, never a reduction in detail:
+
+- **Direction**: prefer `flowchart LR` when the evidence describes a clear left-to-right request pipeline (matches
+  how the business flow actually executes); switch to `TB` only if `LR` produces excessive width/overflow.
+- **One subgraph per flow/use-case**: group each tightly-coupled request path (entry point → API boundary → compute
+  → data store) into its own subgraph so it reads as a single uninterrupted path without doubling back across the
+  canvas.
+- **Order subgraphs to match the real business sequence** (e.g. search → lookup → pricing → quote → creation) so
+  edges between subgraphs mostly flow in one direction instead of crossing back over earlier subgraphs.
+- **Consolidate cross-cutting/shared nodes** (observability, logging, CI/CD, secrets/KMS, shared auth) into a single
+  dedicated subgraph/lane rather than scattering them next to every business node. Connect them with the minimum
+  number of edges needed to convey the relationship (e.g. one edge per subgraph boundary instead of one dashed edge
+  per Lambda) — if Mermaid can't express a group-level edge, note the relationship in the node label instead of
+  adding a duplicate edge per instance.
+- **No duplicate fan-out edges** for a relationship that applies identically to a whole group of nodes.
+- Before finalizing, visually re-check the rendered SVG/PNG specifically for line crossings and edge tangles — if
+  present, re-group/reorder subgraphs rather than accepting a cluttered layout as final.
+- **First-time-viewer readability test**: the rendered diagram must be understandable by someone seeing it for
+  the first time, with no prior context. Concretely:
+  - Keep the diagram to one clear, linear, numbered flow (e.g. "1 → 2 → 3 → 4") wherever the evidence supports a
+    single dominant request path — do not fork into many parallel per-endpoint paths if they share the same
+    shape.
+  - Use short, plain-language node labels describing *what the thing does* (e.g. "Get Price Quote — calculates
+    rent, tax, initial payment") rather than only internal class/file names.
+  - Collapse repeated cross-cutting concerns (observability, CI/CD, IAM, secrets) into a single shared
+    "platform safety nets" style box connected once, instead of fanning a dashed edge out to every individual
+    node — the exhaustive per-node detail belongs in the evidence appendix, not the diagram.
+  - If applying full technical detail would make the diagram hard to follow at a glance, simplify the diagram
+    and move the extra detail into the evidence `.md` file instead of omitting it entirely — the diagram is the
+    at-a-glance map; the evidence file is the deep reference.
+- **Support-detail completeness checklist** — before finalizing, re-scan your own evidence-gathering notes and
+  confirm the diagram surfaces every one of these facts *when the evidence step found them* (add a short label
+  line rather than a new node if space is tight; never invent a value you didn't read):
+  - Cache key naming pattern (e.g. `STOREPROFILECACHEKEY-{storeNumber}`) and cache-miss fallback behavior for
+    any cache-aside pattern found.
+  - Circuit breaker / retry configuration: the actual parameter names (fail threshold, success threshold,
+    timeout, enable/disable flag) if evidenced, not just "a circuit breaker exists".
+  - Error-handling/response-mapping pattern (e.g. "400/404 -> BadRequest, other -> UnexpectedError") if the code
+    shows one — this is often the single most useful fact for a support engineer triaging a reported error code.
+  - Exact downstream call paths/routes (not just "calls a downstream API") when the evidence includes them.
+  - Any env var / config flag that changes runtime behavior in a way relevant to debugging (e.g. a
+    `SKIP_<CACHE>` bypass flag, a feature flag gating a code path).
+  - If adding one of these facts would overflow a node/container and risk a new overlap, widen the container
+    first (per the Anti-Overlap Rules) rather than omitting the fact silently.
 
 ## 📦 Required Deliverables (per module, written to `diagrams/` by default)
 

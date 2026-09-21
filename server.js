@@ -18,6 +18,7 @@ if (!process.env.GITHUB_TOKEN) {
 }
 
 const DEFAULT_ORG = process.env.GITHUB_ORG || "rentacenter";
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
 const server = new McpServer({
   name: "architecture-diagram-analysis-server",
@@ -27,10 +28,29 @@ const server = new McpServer({
 const github = axios.create({
   baseURL: "https://api.github.com",
   headers: {
-    Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+    Authorization: `Bearer ${GITHUB_TOKEN}`,
     Accept: "application/vnd.github.v3+json",
   },
 });
+
+// ─── Secret Redaction ──────────────────────────────────────────────────────────
+//
+// getOrCloneRepo() embeds GITHUB_TOKEN directly in the clone URL so `git`/execSync
+// can authenticate. When execSync throws (bad repo name, network blip, auth
+// failure, timeout), Node's thrown Error.message includes the FULL failed command
+// line — e.g. "Command failed: git clone --depth=1 --quiet https://<TOKEN>@github.com/...".
+// Every tool below returns err.message straight back to the model/chat transcript,
+// so without this guard the PAT would leak into chat history/logs on any clone
+// failure. redact() must be applied to every error string before it is returned.
+function redact(text) {
+  if (text === undefined || text === null) return text;
+  let out = String(text);
+  if (GITHUB_TOKEN) out = out.split(GITHUB_TOKEN).join("***REDACTED***");
+  // Belt-and-suspenders: strip any embedded-credential GitHub URL even if the
+  // token itself was already partially transformed (e.g. URL-encoded).
+  out = out.replace(/https:\/\/[^@\s"']+@github\.com/g, "https://***REDACTED***@github.com");
+  return out;
+}
 
 // ─── Read-Only Enforcement ─────────────────────────────────────────────────────
 //
@@ -64,8 +84,7 @@ const CACHE_MAX_REPOS = 5; // LRU eviction by clonedAt
 
 async function getOrCloneRepo(org, repo) {
   const cacheKey = `${org}/${repo}`;
-  const token = process.env.GITHUB_TOKEN;
-  const cloneUrl = `https://${token}@github.com/${org}/${repo}.git`;
+  const cloneUrl = `https://${GITHUB_TOKEN}@github.com/${org}/${repo}.git`;
 
   const cached = repoCache.get(cacheKey);
   if (cached) {
@@ -137,6 +156,18 @@ function truncateToRelevantSection(content, keyword, maxLines = 150) {
 /**
  * Extracts up to maxKeywords meaningful words from a natural-language string.
  */
+// Short technical acronyms that are highly meaningful for code/IaC search but
+// would otherwise be dropped by the length filter below (e.g. "SQS", "IAM",
+// "S3", "ARN" are only 2-3 characters). Without this allowlist, a question
+// like "does this use SQS or S3?" silently degrades to searching only on
+// generic stopword-filtered leftovers, increasing the odds fetch_issue_context
+// returns "no matches" and the agent falls back to an unverified inference
+// instead of confirmed evidence.
+const ALWAYS_KEEP_KEYWORDS = new Set([
+  "s3", "ec2", "db", "ui", "iam", "arn", "sqs", "sns", "ecs", "api", "sdk",
+  "jwt", "sso", "waf", "acl", "vpc", "kms", "rds", "msk", "idp", "mfa", "cdn",
+]);
+
 function extractKeywords(text, maxKeywords = 6) {
   const stop = new Set([
     "the","a","an","is","in","on","at","to","for","of","and","or","not",
@@ -151,7 +182,7 @@ function extractKeywords(text, maxKeywords = 6) {
         .toLowerCase()
         .replace(/[^\w\s]/g, " ")
         .split(/\s+/)
-        .filter((w) => w.length > 3 && !stop.has(w))
+        .filter((w) => (w.length > 2 || ALWAYS_KEEP_KEYWORDS.has(w)) && !stop.has(w))
     ),
   ].slice(0, maxKeywords);
 }
@@ -179,7 +210,7 @@ server.tool(
         }],
       };
     } catch (err) {
-      return { content: [{ type: "text", text: `Error: ${err.message}` }], isError: true };
+      return { content: [{ type: "text", text: `Error: ${redact(err.message)}` }], isError: true };
     }
   }
 );
@@ -199,7 +230,7 @@ server.tool(
       const content = Buffer.from(res.data.content, "base64").toString();
       return { content: [{ type: "text", text: content }] };
     } catch (err) {
-      return { content: [{ type: "text", text: `Error: ${err.message}` }], isError: true };
+      return { content: [{ type: "text", text: `Error: ${redact(err.message)}` }], isError: true };
     }
   }
 );
@@ -234,7 +265,7 @@ server.tool(
         content: [{ type: "text", text: JSON.stringify({ totalFiles: res.data.length, jsFiles: jsFiles.map((f) => f.name) }, null, 2) }],
       };
     } catch (err) {
-      return { content: [{ type: "text", text: `Error: ${err.message}` }], isError: true };
+      return { content: [{ type: "text", text: `Error: ${redact(err.message)}` }], isError: true };
     }
   }
 );
@@ -274,7 +305,7 @@ server.tool(
         }],
       };
     } catch (err) {
-      return { content: [{ type: "text", text: `Error: ${err.message}` }], isError: true };
+      return { content: [{ type: "text", text: `Error: ${redact(err.message)}` }], isError: true };
     }
   }
 );
@@ -338,7 +369,7 @@ server.tool(
           }],
         };
       } catch (err2) {
-        return { content: [{ type: "text", text: `Error: ${err2.message}` }], isError: true };
+        return { content: [{ type: "text", text: `Error: ${redact(err2.message)}` }], isError: true };
       }
     }
   }
@@ -386,7 +417,7 @@ server.tool(
         }],
       };
     } catch (err) {
-      return { content: [{ type: "text", text: `Error: ${err.message}` }], isError: true };
+      return { content: [{ type: "text", text: `Error: ${redact(err.message)}` }], isError: true };
     }
   }
 );
@@ -528,7 +559,7 @@ server.tool(
         }],
       };
     } catch (err) {
-      return { content: [{ type: "text", text: `Error: ${err.message}` }], isError: true };
+      return { content: [{ type: "text", text: `Error: ${redact(err.message)}` }], isError: true };
     }
   }
 );
@@ -628,7 +659,7 @@ server.tool(
         }],
       };
     } catch (err) {
-      return { content: [{ type: "text", text: `Error: ${err.message}` }], isError: true };
+      return { content: [{ type: "text", text: `Error: ${redact(err.message)}` }], isError: true };
     }
   }
 );
@@ -672,7 +703,7 @@ server.tool(
         }],
       };
     } catch (err) {
-      return { content: [{ type: "text", text: `Error: ${err.message}` }], isError: true };
+      return { content: [{ type: "text", text: `Error: ${redact(err.message)}` }], isError: true };
     }
   }
 );
@@ -713,7 +744,7 @@ server.tool(
         }],
       };
     } catch (err) {
-      return { content: [{ type: "text", text: `Error: ${err.message}` }], isError: true };
+      return { content: [{ type: "text", text: `Error: ${redact(err.message)}` }], isError: true };
     }
   }
 );
@@ -772,7 +803,7 @@ server.tool(
         }],
       };
     } catch (err) {
-      return { content: [{ type: "text", text: `Error: ${err.message}` }], isError: true };
+      return { content: [{ type: "text", text: `Error: ${redact(err.message)}` }], isError: true };
     }
   }
 );
@@ -846,7 +877,7 @@ server.tool(
         }],
       };
     } catch (err) {
-      return { content: [{ type: "text", text: `Error: ${err.message}` }], isError: true };
+      return { content: [{ type: "text", text: `Error: ${redact(err.message)}` }], isError: true };
     }
   }
 );
@@ -887,7 +918,7 @@ server.tool(
         }],
       };
     } catch (err) {
-      return { content: [{ type: "text", text: `Error: ${err.message}` }], isError: true };
+      return { content: [{ type: "text", text: `Error: ${redact(err.message)}` }], isError: true };
     }
   }
 );
@@ -935,7 +966,7 @@ server.tool(
         }],
       };
     } catch (err) {
-      return { content: [{ type: "text", text: `Error: ${err.message}` }], isError: true };
+      return { content: [{ type: "text", text: `Error: ${redact(err.message)}` }], isError: true };
     }
   }
 );
@@ -1012,7 +1043,7 @@ server.tool(
         }],
       };
     } catch (err) {
-      return { content: [{ type: "text", text: `Error: ${err.message}` }], isError: true };
+      return { content: [{ type: "text", text: `Error: ${redact(err.message)}` }], isError: true };
     }
   }
 );
@@ -1047,7 +1078,7 @@ server.tool(
     try {
       entries = readdirSync(targetDir, { withFileTypes: true });
     } catch (err) {
-      return { content: [{ type: "text", text: `Cannot read directory: ${err.message}` }], isError: true };
+      return { content: [{ type: "text", text: `Cannot read directory: ${redact(err.message)}` }], isError: true };
     }
 
     for (const entry of entries) {
@@ -1057,7 +1088,7 @@ server.tool(
         rmSync(fullPath, { force: true });
         deleted.push(entry.name);
       } catch (err) {
-        errors.push({ file: entry.name, error: err.message });
+        errors.push({ file: entry.name, error: redact(err.message) });
       }
     }
 

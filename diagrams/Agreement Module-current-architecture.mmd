@@ -1,0 +1,65 @@
+flowchart LR
+    accTitle: Agreement Module Current-State Architecture - Simplified
+    accDescr: Simplified current-state architecture for the RACPad Agreement module showing the plain request flow from store associate browser through the BFF, enterprise API, backend services, and data/downstream integrations.
+
+    Browser["🧑‍💼 Store Associate Browser<br/>RACPad Agreement app"]
+
+    subgraph Frontend["1. Frontend"]
+        BFF["racpad_agreement BFF Lambda<br/>(single Lambda, routes by operation:<br/>price quote, item pricing, create agreement,<br/>legal price check, customer search, etc.)"]
+    end
+
+    subgraph Gateway["2. Enterprise API"]
+        RacApi["Enterprise RAC API<br/>routes each BFF call to the right backend"]
+    end
+
+    subgraph Backend["3. Backend Services (es_agreementcreate)"]
+        PriceQuote["Get Price Quote<br/>calculates rent, tax, initial payment"]
+        CreateAgr["Create Agreement<br/>saves the new agreement"]
+    end
+
+    subgraph Downstream["4. Downstream Checks (called by Price Quote & Create Agreement)"]
+        Legal["Legal Limits Check<br/>validates item price is legally allowed"]
+        Tax["Tax Calculation<br/>calculates tax on the agreement"]
+        StoreRules["Store Business Rules<br/>ElastiCache - Redis, cache-aside<br/>key: STOREPROFILECACHEKEY-{storeNumber}"]
+    end
+
+    subgraph Data["5. Data Store"]
+        DB[("PostgreSQL - RACDB<br/>agreement, customer, inventory records")]
+    end
+
+    subgraph Platform["Platform Safety Nets (apply to all backend services)"]
+        direction TB
+        CB["Circuit breaker<br/>stops calling a failing service instead of hanging"]
+        Logs["Logs & tracing<br/>CloudWatch + tracing for every request"]
+    end
+
+    Browser -->|"1 - opens app, searches customer/items"| BFF
+    BFF -->|"2 - sends request"| RacApi
+    RacApi -->|"3a - price quote request"| PriceQuote
+    RacApi -->|"3b - create agreement request"| CreateAgr
+
+    PriceQuote -->|"checks item price"| Legal
+    PriceQuote -->|"calculates tax"| Tax
+    PriceQuote -->|"reads store rules"| StoreRules
+
+    CreateAgr -->|"re-checks item price"| Legal
+    CreateAgr -->|"reads store rules"| StoreRules
+    CreateAgr -->|"4 - saves agreement"| DB
+
+    DB -.->|"all backend calls are protected by"| CB
+
+    classDef browser fill:#eaf4fb,stroke:#2c79a8,color:#173a59
+    classDef frontend fill:#fff4dd,stroke:#b8860b,color:#5c4400
+    classDef gateway fill:#f6e9ff,stroke:#7a3fae,color:#3d1a55
+    classDef backend fill:#eafbea,stroke:#2f9e44,color:#164a20
+    classDef downstream fill:#fdeaea,stroke:#c0392b,color:#5c1a13
+    classDef data fill:#eaf1fb,stroke:#2c5a9e,color:#173a59
+    classDef platform fill:#f3f0fb,stroke:#6c4bb8,color:#382465
+
+    class Browser browser
+    class BFF frontend
+    class RacApi gateway
+    class PriceQuote,CreateAgr backend
+    class Legal,Tax,StoreRules downstream
+    class DB data
+    class CB,Logs platform

@@ -261,23 +261,72 @@ unrelated icons — the root causes and fixes are:
    opportunities and a genuinely easier diagram to read, which is the actual goal.
 6. Keep edge labels short (1-4 words). Put the detailed fact in the node's label or the evidence appendix, not
    on an edge — long edge labels are the most common source of label-over-label collisions.
+6a. **Support-detail completeness checklist** (identical bar to the Mermaid agent) — before finalizing, confirm
+    the diagram's node labels surface every one of these facts when your evidence-gathering step actually found
+    them (never invent a value you didn't read): cache key naming pattern + cache-miss fallback behavior for any
+    cache-aside pattern; circuit breaker/retry parameter names (fail/success threshold, timeout, enable flag) if
+    evidenced; the error-handling/response-mapping pattern (e.g. "400/404 -> BadRequest, other -> UnexpectedError")
+    if the code shows one; exact downstream call paths/routes; any env var/config flag that changes runtime
+    behavior relevant to debugging. If a fact would overflow a node and risk an overlap, widen the node/container
+    first (per the Layout & Anti-Overlap Rules) rather than omitting it silently — re-run the self-check after
+    widening.
+7. **Never draw an edge directly between two container/group IDs** when either container holds more than one
+   child node. A container-to-container edge has no single fixed anchor point, so its route (and label) is
+   likely to cross an unrelated node-to-node edge and collide with that edge's label (observed defect in the
+   sibling Mermaid pipeline: a cluster-level "protected by" edge crossed a "re-checks item price" edge and both
+   labels overlapped into unreadable text — the same risk applies to `.drawio` container edges). Always source
+   and target a specific leaf node id instead (e.g. the last node in the upstream flow, or the data store), even
+   when the concept being shown ("applies to the whole group") is a group-level relationship.
+8. **Prefer edge-embedded labels over separate label vertices.** Put the label text directly in the edge
+   `mxCell`'s `value` attribute (with `labelBackgroundColor=#ffffff` so it stays readable over crossing lines)
+   instead of creating a separate `vertex="1"` label cell with its own hand-picked `mxGeometry`. Draw.io
+   auto-positions an edge-embedded label along the computed path, so it cannot end up geometrically overlapping
+   an unrelated layer container or node the way a manually-positioned label vertex can — this was the single
+   biggest source of overlap defects in practice (a whole revision had to be rebuilt after ~15+ label-vs-container
+   overlaps from hand-placed label vertices). Only use a separate label vertex when the edge truly needs no
+   visible line (e.g. a legend swatch) or multiple independent labels on one edge.
+9. **When a node's label needs multiple lines of real troubleshooting detail** (cache keys, circuit-breaker
+   parameter names, error-handling patterns, etc.), do not try to fit icon + label side-by-side with neighboring
+   icon+label pairs in a shared row — that is the layout that broke down under content growth in this diagram
+   (widening one label repeatedly forced re-overlaps with its row neighbor). Instead default to **one item per
+   row in a single vertical column per layer**, with the icon centered above its label and generous fixed row
+   height (compute needed height as roughly `numberOfLines * 16 + 20` px, then round up generously — never trust
+   an exact pixel estimate). Stack items with a fixed gap (≥30px) and size the layer's background container to
+   strictly enclose the full stack (top padding ≥50px for the title, bottom padding ≥20px). This trades a taller
+   canvas for a layout that is mechanically guaranteed not to overlap, which is the actual goal.
+10. **After every edit that changes any label's text length or any node's width/height, re-run the mandatory
+    self-check before continuing** — do not batch multiple content additions and check once at the end; overlaps
+    compound and become harder to trace back to which specific edit caused them.
+11. **A node/label NOT overlapping any other box is not sufficient — the edge's path itself must also not pass
+    through an unrelated node.** Two boxes can be geometrically non-overlapping while an edge connecting a third
+    node still routes straight through one of them (observed defect: an edge between two same-column nodes
+    routed directly through the node/label sitting between them, even though no two node boxes overlapped).
+    Whenever an edge connects two nodes that are not immediately adjacent (same column with something in
+    between, or spanning multiple layers), give it an explicit dedicated routing lane: a corridor of x (or y)
+    coordinates you have verified is clear of every other node's bounding box, using `<Array as="points">` to
+    force the path through that corridor. Give each such edge its own lane (not shared with another cross-cutting
+    edge) so parallel lane traffic doesn't visually coincide. This is exactly what the `validate-drawio.ps1`
+    script's "edge-path vs unrelated-node crossing check" (see Validation section) verifies — do not skip it.
 
 ## ⚠️ Rendering Limitation — No Local Visual Validation
 
 Unlike the Mermaid pipeline (which can be rendered and screenshotted locally via mermaid-cli for visual
 validation before delivery), there is **no local tool in this workspace to render or screenshot a `.drawio` file**.
-To compensate, you must run the automated structural/geometric self-check described below (via `runInTerminal` +
-PowerShell) — this is a required substitute for visual validation, not optional tooling:
+To compensate, you must run the mandatory automated structural/geometric self-check script,
+`diagrams/validate-drawio.ps1` (create it if it does not yet exist in the target workspace, using the version
+documented in the Validation section below) — this is a required substitute for visual validation, not optional
+tooling:
 1. Author the XML carefully following the Layout & Anti-Overlap Rules above (show your coordinate plan/grid
    before writing the file if the diagram is large).
-2. Run the PowerShell verification script in the Validation section below and fix anything it flags before
-   considering the file done.
+2. Run `diagrams/validate-drawio.ps1 -Path "diagrams/<file>.drawio"` and fix every issue it reports — including
+   edge-path-vs-unrelated-node crossings, not just node/label bounding-box overlaps — before considering the
+   file done. Re-run after every fix; do not assume one fix didn't introduce a new issue elsewhere.
 3. Tell the user plainly that this file has not been visually pre-rendered/screenshotted the way Mermaid
    diagrams are (only structurally/geometrically self-checked), and ask them to open it in draw.io desktop,
    [app.diagrams.net](https://app.diagrams.net), or the VS Code "Draw.io Integration" extension to confirm the
    final visual layout — offering to iterate on specific coordinates based on their feedback.
 4. Never claim the rendered result "looks correct" — only claim the XML is well-formed, structurally
-   overlap-free per the automated check, and evidence-grounded.
+   overlap-free and crossing-free per the automated check, and evidence-grounded.
 
 ## 📦 Required Deliverables (per module, written to `diagrams/` by default)
 
@@ -296,40 +345,31 @@ This agent does **not** produce `.mmd`, `.svg`, or `.png` files — that is the 
 
 - XML is well-formed (balanced tags, every `mxCell` has a unique `id`, every edge's `source`/`target` references
   an existing vertex id).
-- **Mandatory automated self-check** — since there is no local renderer, run this PowerShell check via
-  `runInTerminal` against the finished file and resolve every issue it reports before delivering:
+- **Mandatory automated self-check** — since there is no local renderer, use `diagrams/validate-drawio.ps1`
+  against the finished file (create this script in the workspace's `diagrams/` folder if it does not already
+  exist there — it is a permanent, reusable tool, not a one-off inline snippet) and resolve every issue it
+  reports before delivering:
   ```powershell
-  $xml = [xml](Get-Content "diagrams/<file>.drawio" -Raw)
-  $cells = $xml.mxfile.diagram.mxGraphModel.root.mxCell
-  # 1) duplicate ids
-  $ids = $cells | ForEach-Object { $_.id }
-  $ids | Group-Object | Where-Object { $_.Count -gt 1 } | ForEach-Object { Write-Host "DUPLICATE ID: $($_.Name)" }
-  # 2) dangling edge refs
-  $idSet = @{}; foreach ($i in $ids) { $idSet[$i] = $true }
-  $edges = $cells | Where-Object { $_.edge -eq "1" }
-  foreach ($e in $edges) {
-    if (-not $idSet.ContainsKey($e.source)) { Write-Host "$($e.id): missing source $($e.source)" }
-    if (-not $idSet.ContainsKey($e.target)) { Write-Host "$($e.id): missing target $($e.target)" }
-  }
-  # 3) node-vs-node overlaps, excluding legitimate full containment (layer contains sub-container)
-  $verts = $cells | Where-Object { $_.vertex -eq "1" }
-  $boxes = $verts | ForEach-Object { $g=$_.mxGeometry; [pscustomobject]@{ Id=$_.id; X=[double]$g.x; Y=[double]$g.y; W=[double]$g.width; H=[double]$g.height } }
-  for ($i=0; $i -lt $boxes.Count; $i++) { for ($j=$i+1; $j -lt $boxes.Count; $j++) {
-    $a=$boxes[$i]; $b=$boxes[$j]; $ax2=$a.X+$a.W; $ay2=$a.Y+$a.H; $bx2=$b.X+$b.W; $by2=$b.Y+$b.H
-    $overlap = ($a.X -lt $bx2 -and $ax2 -gt $b.X -and $a.Y -lt $by2 -and $ay2 -gt $b.Y)
-    if (-not $overlap) { continue }
-    $aContainsB = ($a.X -le $b.X -and $a.Y -le $b.Y -and $ax2 -ge $bx2 -and $ay2 -ge $by2)
-    $bContainsA = ($b.X -le $a.X -and $b.Y -le $a.Y -and $bx2 -ge $ax2 -and $by2 -ge $ay2)
-    if ($aContainsB -or $bContainsA) { continue }
-    Write-Host "OVERLAP: $($a.Id) <-> $($b.Id)"
-  } }
+  powershell -ExecutionPolicy Bypass -File "diagrams/validate-drawio.ps1" -Path "diagrams/<file>.drawio"
   ```
-  Fix every duplicate id, dangling reference, and reported overlap — do not deliver the file until this script
-  reports clean.
-- For any edge that connects two nodes NOT in the same row/container and NOT using explicit waypoints, sanity
-  check by eye whether a straight line between their centers would cross a third node's bounding box; if it
-  would (or might), add explicit routing per the Layout & Anti-Overlap Rules rather than trusting automatic
-  routing.
+  The script checks four things and must report **PASS** on all of them before the file is considered done:
+  1. Duplicate `mxCell` ids.
+  2. Dangling edge `source`/`target` references (pointing at an id that doesn't exist).
+  3. Node-vs-node bounding-box overlaps (excluding legitimate full containment, e.g. a layer background
+     enclosing its child nodes).
+  4. **Edge-path-vs-unrelated-node crossings** — for every edge, it reconstructs the orthogonal path (from
+     `exitX/exitY`/`entryX/entryY` fractions plus any explicit `<Array as="points">` waypoints) and checks every
+     segment against every other node's bounding box (excluding the edge's own source/target and layer
+     background/legend cells). This is the check that catches an edge routing straight through an unrelated
+     node/label even when no two node boxes directly overlap — the root cause of a real defect found in
+     production use (an edge's auto-positioned label rendered on top of an unrelated node it merely passed
+     through). Fix every reported crossing by adding an explicit dedicated routing lane (see Layout &
+     Anti-Overlap Rules #11), then re-run the script — do not consider the file done until it prints
+     `PASS - file is structurally and geometrically clean.`
+  If `diagrams/validate-drawio.ps1` does not exist yet in this workspace, author it fresh using the same four
+  checks described above (duplicate ids, dangling edges, node/label bounding-box overlap, and edge-segment vs
+  node-box crossing with an orthogonal-elbow approximation) so it can be reused on every future diagram in this
+  workspace without re-deriving the logic each time.
 - No secrets, tokens, account IDs, or internal URLs baked into the diagram or evidence file.
 - Every node in the diagram has at least one row in the evidence appendix.
 - Explicitly list anything searched for but **not found**.
