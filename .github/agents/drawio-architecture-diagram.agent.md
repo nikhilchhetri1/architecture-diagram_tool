@@ -149,6 +149,57 @@ back of the z-order, **not** a true mxGraph parent/child container) sized to vis
 Using non-parented background rectangles (rather than true containers) keeps coordinate math simple (all node
 geometry stays in absolute page coordinates) while still reading as clearly grouped layers/sub-groups.
 
+## 🧭 Left-to-Right Column Layout (MANDATORY — house style, reference: `diagrams/Agreement Module-current-architecture.drawio`)
+
+Every draw.io diagram **reads left to right along the request path**. Each layer is a **vertical column**, not a
+horizontal row. Do not produce top-to-bottom layered diagrams.
+
+1. **Column order (left → right):** Experience & Identity → API Boundary → Enterprise/API hop (only if evidenced,
+   purple `#F6E9FF`/`#7A3FAE`) → Synchronous Services → Data & Resilience State → Event & Integration Pipelines →
+   External Integrations & Platform Controls. CI/CD is a dashed `#F3F0FB`/`#6C4BB8` container **stacked below** the
+   External/Platform column. Omit empty layers.
+   - **Chained services** (e.g. BFF then backend service): repeat the pair, e.g. `Experience | BFF API Boundary |
+     BFF Lambdas | Enterprise API hop | Backend API Boundary | Backend Lambdas | Data & Event | Platform`. Name each
+     column after its repo (e.g. `Synchronous Services (racpad_am BFF)`).
+   - Data and Event columns may be **stacked vertically in one column** (two containers) to keep the page ≤ ~3000px
+     wide. Put the layer whose edges arrive from the top of the source column at the top.
+2. **Column geometry:** first column `x=40`; column width 260–340; **gap between columns = 40px**; all columns start
+   at the same `y` (=100, below the ≥80px heading band); container height = its stack + ≥20px bottom padding.
+   The 40px gaps are the **bus lanes** for edges (bus x = gap centre, e.g. column right edge + 20).
+3. **Inside a column: one node per row, stacked top to bottom.** AWS icon = 78×78, horizontally centred in the
+   column, with its **caption as a separate text vertex directly below** (`y = icon y + 84`, width = column width
+   − 40 (− 60 when the column has side lanes), style
+   `text;html=1;align=center;verticalAlign=top;fontSize=11;whiteSpace=wrap;overflow=hidden;`, height ≈
+   `lines*15 + 15`). The icon cell itself has `value=""`. Next node's `y` = previous caption bottom + 30. Plain
+   rectangles (Tier 3, hop, external systems, CI/CD, UI toggles) are a single vertex with the text inside, also
+   stacked with ≥30px gaps. Using separate caption vertices (not `verticalLabelPosition=bottom` on the icon) is
+   deliberate: the validator then sees the real caption footprint.
+4. **Legend** sits in the bottom of the first (leftmost) column, below its container: swatch per used layer colour +
+   one text vertex with tier/edge-style/evidence-snapshot notes. Legend swatch ids `lg1..lg9`, container id `legend`.
+5. **Flow direction is left → right.** Edges between adjacent columns leave the source's right port and enter the
+   target's left port (`exitX=1;exitY=0.5;entryX=0;entryY=0.5`). **Choose node `y` values so connected nodes
+   share a centre-y and the edge is a straight horizontal line with no waypoints.**
+6. **Fan-out / fan-in through a bus lane:** `<Array as="points">` = `(busX, sourceCenterY)`, `(busX, targetCenterY)`;
+   `busX` is inside the 40px gap. Order nodes so connected nodes are contiguous and lanes don't interleave; when
+   two edges would share a lane over the same y-range use different `busX` values (±8px). A shared trunk from one
+   source port to many targets is fine; the bottom/top target of a trunk may branch off it as a straight line.
+7. **Same-column edges must NOT leave the icon's top/bottom** (they would run through the caption). Prefer merging
+   the nodes; otherwise exit/enter the icon's **left/right** port and route via a side lane inside the column
+   (`x = column left + 15` or `column right − 15`) with explicit waypoints — captions are narrower than the column
+   so the lane is clear. Use the left lane for one edge and the right lane for another at the same node.
+8. **Horizontal edge segments run only along icon-centre rows** (icon `y..y+78`), which are free because captions
+   start at `icon y + 84`. Never let a segment cross a caption or a rectangle it is not connected to.
+9. **Nodes with no evidenced runtime edge** (Secrets Manager, KMS, observability, log streams, feature toggles,
+   CI/CD, tables whose runtime use was not traced) live in the Platform/Data column with "no direct edge drawn" (or
+   "runtime use not traced") in the caption — never add speculative edges. **Dashed** edges = IaC-wired/not
+   runtime-traced, observability, deploy.
+10. **Edge–edge crossings** are tolerated only where unavoidable; **edge-through-node/caption is never allowed**
+    (validator-enforced).
+11. **Page size:** `pageWidth` ≥ last column right edge + 80; `pageHeight` ≥ tallest column bottom + 120.
+12. **Coordinate plan first:** before writing XML, tabulate per column: node id, icon `y`, caption `y`/`h`, next
+    `y`, centre-y; then derive edge waypoints from those centre-y values. Recompute the whole column whenever a
+    caption height changes.
+
 ## 🎨 Icon & Style Requirements
 
 ### Icon selection priority (choose the highest tier you have confident evidence for)
@@ -200,8 +251,8 @@ geometry stays in absolute page coordinates) while still reading as clearly grou
   `cloudwatch`, `xray`, `kinesis_data_streams`, `permissions`, `user`, `virtual_private_cloud_vpc`).
   Use a flat `fillColor` per AWS category as the icon badge color (Compute `#ED7100`, Storage `#7AA116`,
   Networking `#8C4FFF`, Security/Identity `#DD344C`, Management/Governance `#E7157B`, App Integration `#E7157B`,
-  Analytics `#8C4FFF`, Database `#527FFF`), `strokeColor=none`, `verticalLabelPosition=bottom`,
-  `verticalAlign=top`, icon size 78×78.
+  Analytics `#8C4FFF`, Database `#527FFF`), `strokeColor=none`, `value=""` (caption is a separate text vertex
+  per the Left-to-Right Column Layout), icon size 78×78.
 - **Non-AWS, non-database items** (third-party SaaS like New Relic/Datadog, internal code modules like
   use-case functions or validators, CI/CD tools like GitHub Actions, generic external systems/APIs) → use
   plain rounded rectangles (`rounded=1;whiteSpace=wrap;html=1;`) or a `shape=cloud` for external systems,
@@ -223,6 +274,18 @@ geometry stays in absolute page coordinates) while still reading as clearly grou
   over cramped overlapping labels. Multi-line labels use `&lt;br&gt;` (HTML-escaped) inside the `value` attribute
   since `html=1` is set.
 
+## 🏷️ Mandatory Diagram Heading
+
+- Every `.drawio` diagram **must** include a visible heading at the top of the page in the form
+  `<Module> Module` (e.g. `Customer Module`, `Agreement Module`, `Payment Module`) — matching the `<Module>`
+  used in the deliverable file names.
+- Implement it as a standalone text cell (`vertex="1"`, style e.g.
+  `text;html=1;align=center;verticalAlign=middle;fontSize=28;fontStyle=1;strokeColor=none;fillColor=none;`)
+  placed above all layer containers, horizontally centered across the full diagram width.
+- Reserve a dedicated band for it (≥80px tall) above the topmost layer container so it cannot overlap any node,
+  container, legend, or edge — shift the rest of the layout down if needed, then re-run the validation script.
+- Also set the `<diagram name="...">` attribute to the same heading text.
+
 ## 📐 Layout & Anti-Overlap Rules (mandatory — learned from prior overlap defects)
 
 A `.drawio` file cannot be rendered locally to visually catch overlaps, so overlaps must be **prevented by
@@ -230,54 +293,94 @@ construction** using the numeric rules below, then checked with the script in th
 attempt produced a diagram with edge labels overlapping node labels and edges cutting straight through
 unrelated icons — the root causes and fixes are:
 
-1. **Icon pitch within a row >= 280px** (icon is 78px + up to ~200px for a wrapped 2-line label centered under
-   it). Never place two icons/rects closer than this within the same visual row.
-2. **Row-to-row pitch >= 300px**, reserving: icon/rect height + up to 90px for a 2-3 line label below it + at
-   least 90px of genuinely empty "gap-lane" before the next row's content starts. This gap-lane is where
-   cross-row edges and their labels live — never place a node or label inside it.
-3. **Never draw a plain/default edge between a hub node and a same-row target when another node sits visually
-   between them.** This was the #1 source of the original defect (e.g. `CF -> S3App` drawn as a direct line
-   sliced straight through `EdgeLambda`, which sat between them in the same row). Instead, for any such
-   "skip-over" edge:
-   - Anchor the edge's `exitY`/`entryY` at `1` (bottom) on both ends so the router dips down into the clear
-     gap-lane below the row, travels across, and rises back up into the target from below — this never
-     crosses anything in the row itself.
-   - If the two ends are already in different rows (naturally vertical), just use `exitY=1` (bottom of source)
-     and `entryY=0` (top of target) — no dip needed since they're already stacked.
-   - For edges spanning a wide horizontal distance across multiple sibling containers (e.g. a "deploy" edge
-     from an early layer all the way to a CI/CD node in the last layer), route through a dedicated margin
-     lane — pick an x (or y) coordinate that sits outside every sibling container's bounding box in every
-     layer the edge passes through — and add explicit `<Array as="points"><mxPoint .../></Array>` waypoints
-     inside `mxGeometry` to force the path through that lane. Do not rely on automatic routing alone for edges
-     that cross more than one sibling container.
+1. **Column pitch = column width + 40px gap** (see the Left-to-Right Column Layout section); never place two
+   columns closer, and never let a caption or rectangle extend outside its column container.
+2. **Vertical stack pitch inside a column = icon 78 + 6 + caption height + ≥30px gap.** The 40px gaps between
+   columns are the only place edge lanes live — never place a node or caption inside a gap.
+3. **Never draw a plain/default edge that skips over an intermediate node in the same column or between
+   non-adjacent columns.** Instead:
+   - Route it with explicit `<Array as="points">` waypoints through a bus lane in a 40px column gap (fan-out /
+     fan-in) or a side lane inside the column (same-column edges, see Left-to-Right rule 7).
+   - Never exit/enter an icon at top/bottom when a caption sits there — use left/right ports.
+   - For edges spanning several columns (e.g. "deploy" from an early layer to CI/CD in the last column), pick an
+     x/y corridor that sits outside every column container's content in every column it passes, and give it
+     explicit waypoints. Do not rely on automatic routing for edges that cross more than one column.
    - Prefer sourcing broad "deploy"/"observability" edges from a layer or sub-container id (e.g. `g_l3`,
      `g_getfn`) rather than from many individual leaf nodes — this both matches the evidence (a whole
      repo/stack is deployed together) and sharply reduces edge count/crossing risk.
-4. **Stagger multiple edges leaving the same node** with slightly different `exitX` fractions (e.g. `0.3`,
-   `0.5`, `0.7`) so they fan out at the source instead of overlapping each other right at the port.
+4. **Stagger multiple edges entering/leaving the same node** with different `exitY`/`entryY` fractions (e.g.
+   `0.2`, `0.5`, `0.75`) when they take different lanes, so they don't overlap at the port. (A deliberate shared
+   trunk from one source port to several targets is the exception.)
 5. **Merge near-duplicate nodes/edges where evidence allows it** (e.g. two DR failover buckets that share the
    same fate/condition can be one node; a bidirectional auth handshake can be one bidirectional edge with
    `startArrow=block;endArrow=block` instead of two overlapping edges) — fewer elements means fewer crossing
    opportunities and a genuinely easier diagram to read, which is the actual goal.
 6. Keep edge labels short (1-4 words). Put the detailed fact in the node's label or the evidence appendix, not
    on an edge — long edge labels are the most common source of label-over-label collisions.
+6a. **Support-detail completeness checklist** (identical bar to the Mermaid agent) — before finalizing, confirm
+    the diagram's node labels surface every one of these facts when your evidence-gathering step actually found
+    them (never invent a value you didn't read): cache key naming pattern + cache-miss fallback behavior for any
+    cache-aside pattern; circuit breaker/retry parameter names (fail/success threshold, timeout, enable flag) if
+    evidenced; the error-handling/response-mapping pattern (e.g. "400/404 -> BadRequest, other -> UnexpectedError")
+    if the code shows one; exact downstream call paths/routes; any env var/config flag that changes runtime
+    behavior relevant to debugging. If a fact would overflow a node and risk an overlap, widen the node/container
+    first (per the Layout & Anti-Overlap Rules) rather than omitting it silently — re-run the self-check after
+    widening.
+7. **Never draw an edge directly between two container/group IDs** when either container holds more than one
+   child node. A container-to-container edge has no single fixed anchor point, so its route (and label) is
+   likely to cross an unrelated node-to-node edge and collide with that edge's label (observed defect in the
+   sibling Mermaid pipeline: a cluster-level "protected by" edge crossed a "re-checks item price" edge and both
+   labels overlapped into unreadable text — the same risk applies to `.drawio` container edges). Always source
+   and target a specific leaf node id instead (e.g. the last node in the upstream flow, or the data store), even
+   when the concept being shown ("applies to the whole group") is a group-level relationship.
+8. **Prefer edge-embedded labels over separate label vertices (this applies to EDGE labels; node captions are
+   separate text vertices per the Left-to-Right rules).** Put the label text directly in the edge
+   `mxCell`'s `value` attribute (with `labelBackgroundColor=#ffffff` so it stays readable over crossing lines)
+   instead of creating a separate `vertex="1"` label cell with its own hand-picked `mxGeometry`. Draw.io
+   auto-positions an edge-embedded label along the computed path, so it cannot end up geometrically overlapping
+   an unrelated layer container or node the way a manually-positioned label vertex can — this was the single
+   biggest source of overlap defects in practice (a whole revision had to be rebuilt after ~15+ label-vs-container
+   overlaps from hand-placed label vertices). Only use a separate label vertex when the edge truly needs no
+   visible line (e.g. a legend swatch) or multiple independent labels on one edge.
+9. **When a node's label needs multiple lines of real troubleshooting detail** (cache keys, circuit-breaker
+   parameter names, error-handling patterns, etc.), never place icon+caption pairs side by side. The
+   **one-node-per-row vertical stack inside a layer column** (Left-to-Right rules 3, 12) is mandatory: caption
+   height ≈ `numberOfLines * 15 + 15` px, round up, stack with ≥30px gaps, and size the column container to
+   strictly enclose the stack (top padding ≥50px for the title, bottom padding ≥20px). A taller canvas is
+   preferred over any overlap. Long lines may be wrapped by widening the column (≤340px) before dropping facts.
+10. **After every edit that changes any label's text length or any node's width/height, re-run the mandatory
+    self-check before continuing** — do not batch multiple content additions and check once at the end; overlaps
+    compound and become harder to trace back to which specific edit caused them.
+11. **A node/label NOT overlapping any other box is not sufficient — the edge's path itself must also not pass
+    through an unrelated node.** Two boxes can be geometrically non-overlapping while an edge connecting a third
+    node still routes straight through one of them (observed defect: an edge between two same-column nodes
+    routed directly through the node/label sitting between them, even though no two node boxes overlapped).
+    Whenever an edge connects two nodes that are not immediately adjacent (same column with something in
+    between, or spanning multiple columns), give it an explicit dedicated routing lane: a corridor of x (or y)
+    coordinates you have verified is clear of every other node's bounding box, using `<Array as="points">` to
+    force the path through that corridor. Give each such edge its own lane (not shared with another cross-cutting
+    edge) so parallel lane traffic doesn't visually coincide. This is exactly what the `validate-drawio.ps1`
+    script's "edge-path vs unrelated-node crossing check" (see Validation section) verifies — do not skip it.
 
 ## ⚠️ Rendering Limitation — No Local Visual Validation
 
 Unlike the Mermaid pipeline (which can be rendered and screenshotted locally via mermaid-cli for visual
 validation before delivery), there is **no local tool in this workspace to render or screenshot a `.drawio` file**.
-To compensate, you must run the automated structural/geometric self-check described below (via `runInTerminal` +
-PowerShell) — this is a required substitute for visual validation, not optional tooling:
+To compensate, you must run the mandatory automated structural/geometric self-check script,
+`diagrams/validate-drawio.ps1` (create it if it does not yet exist in the target workspace, using the version
+documented in the Validation section below) — this is a required substitute for visual validation, not optional
+tooling:
 1. Author the XML carefully following the Layout & Anti-Overlap Rules above (show your coordinate plan/grid
    before writing the file if the diagram is large).
-2. Run the PowerShell verification script in the Validation section below and fix anything it flags before
-   considering the file done.
+2. Run `diagrams/validate-drawio.ps1 -Path "diagrams/<file>.drawio"` and fix every issue it reports — including
+   edge-path-vs-unrelated-node crossings, not just node/label bounding-box overlaps — before considering the
+   file done. Re-run after every fix; do not assume one fix didn't introduce a new issue elsewhere.
 3. Tell the user plainly that this file has not been visually pre-rendered/screenshotted the way Mermaid
    diagrams are (only structurally/geometrically self-checked), and ask them to open it in draw.io desktop,
    [app.diagrams.net](https://app.diagrams.net), or the VS Code "Draw.io Integration" extension to confirm the
    final visual layout — offering to iterate on specific coordinates based on their feedback.
 4. Never claim the rendered result "looks correct" — only claim the XML is well-formed, structurally
-   overlap-free per the automated check, and evidence-grounded.
+   overlap-free and crossing-free per the automated check, and evidence-grounded.
 
 ## 📦 Required Deliverables (per module, written to `diagrams/` by default)
 
@@ -296,40 +399,33 @@ This agent does **not** produce `.mmd`, `.svg`, or `.png` files — that is the 
 
 - XML is well-formed (balanced tags, every `mxCell` has a unique `id`, every edge's `source`/`target` references
   an existing vertex id).
-- **Mandatory automated self-check** — since there is no local renderer, run this PowerShell check via
-  `runInTerminal` against the finished file and resolve every issue it reports before delivering:
+- Diagram heading `<Module> Module` (e.g. `Customer Module`) is present as a top-of-page text cell and the
+  `<diagram name>` matches it.
+- **Mandatory automated self-check** — since there is no local renderer, use `diagrams/validate-drawio.ps1`
+  against the finished file (create this script in the workspace's `diagrams/` folder if it does not already
+  exist there — it is a permanent, reusable tool, not a one-off inline snippet) and resolve every issue it
+  reports before delivering:
   ```powershell
-  $xml = [xml](Get-Content "diagrams/<file>.drawio" -Raw)
-  $cells = $xml.mxfile.diagram.mxGraphModel.root.mxCell
-  # 1) duplicate ids
-  $ids = $cells | ForEach-Object { $_.id }
-  $ids | Group-Object | Where-Object { $_.Count -gt 1 } | ForEach-Object { Write-Host "DUPLICATE ID: $($_.Name)" }
-  # 2) dangling edge refs
-  $idSet = @{}; foreach ($i in $ids) { $idSet[$i] = $true }
-  $edges = $cells | Where-Object { $_.edge -eq "1" }
-  foreach ($e in $edges) {
-    if (-not $idSet.ContainsKey($e.source)) { Write-Host "$($e.id): missing source $($e.source)" }
-    if (-not $idSet.ContainsKey($e.target)) { Write-Host "$($e.id): missing target $($e.target)" }
-  }
-  # 3) node-vs-node overlaps, excluding legitimate full containment (layer contains sub-container)
-  $verts = $cells | Where-Object { $_.vertex -eq "1" }
-  $boxes = $verts | ForEach-Object { $g=$_.mxGeometry; [pscustomobject]@{ Id=$_.id; X=[double]$g.x; Y=[double]$g.y; W=[double]$g.width; H=[double]$g.height } }
-  for ($i=0; $i -lt $boxes.Count; $i++) { for ($j=$i+1; $j -lt $boxes.Count; $j++) {
-    $a=$boxes[$i]; $b=$boxes[$j]; $ax2=$a.X+$a.W; $ay2=$a.Y+$a.H; $bx2=$b.X+$b.W; $by2=$b.Y+$b.H
-    $overlap = ($a.X -lt $bx2 -and $ax2 -gt $b.X -and $a.Y -lt $by2 -and $ay2 -gt $b.Y)
-    if (-not $overlap) { continue }
-    $aContainsB = ($a.X -le $b.X -and $a.Y -le $b.Y -and $ax2 -ge $bx2 -and $ay2 -ge $by2)
-    $bContainsA = ($b.X -le $a.X -and $b.Y -le $a.Y -and $bx2 -ge $ax2 -and $by2 -ge $ay2)
-    if ($aContainsB -or $bContainsA) { continue }
-    Write-Host "OVERLAP: $($a.Id) <-> $($b.Id)"
-  } }
+  powershell -ExecutionPolicy Bypass -File "diagrams/validate-drawio.ps1" -Path "diagrams/<file>.drawio"
   ```
-  Fix every duplicate id, dangling reference, and reported overlap — do not deliver the file until this script
-  reports clean.
-- For any edge that connects two nodes NOT in the same row/container and NOT using explicit waypoints, sanity
-  check by eye whether a straight line between their centers would cross a third node's bounding box; if it
-  would (or might), add explicit routing per the Layout & Anti-Overlap Rules rather than trusting automatic
-  routing.
+  The script checks four things and must report **PASS** on all of them before the file is considered done:
+  1. Duplicate `mxCell` ids.
+  2. Dangling edge `source`/`target` references (pointing at an id that doesn't exist).
+  3. Node-vs-node bounding-box overlaps (excluding legitimate full containment, e.g. a layer background
+     enclosing its child nodes).
+  4. **Edge-path-vs-unrelated-node crossings** — for every edge, it reconstructs the orthogonal path (from
+     `exitX/exitY`/`entryX/entryY` fractions plus any explicit `<Array as="points">` waypoints) and checks every
+     segment against every other node's bounding box (excluding the edge's own source/target and layer
+     background/legend cells). This is the check that catches an edge routing straight through an unrelated
+     node/label even when no two node boxes directly overlap — the root cause of a real defect found in
+     production use (an edge's auto-positioned label rendered on top of an unrelated node it merely passed
+     through). Fix every reported crossing by adding an explicit dedicated routing lane (see Layout &
+     Anti-Overlap Rules #11), then re-run the script — do not consider the file done until it prints
+     `PASS - file is structurally and geometrically clean.`
+  If `diagrams/validate-drawio.ps1` does not exist yet in this workspace, author it fresh using the same four
+  checks described above (duplicate ids, dangling edges, node/label bounding-box overlap, and edge-segment vs
+  node-box crossing with an orthogonal-elbow approximation) so it can be reused on every future diagram in this
+  workspace without re-deriving the logic each time.
 - No secrets, tokens, account IDs, or internal URLs baked into the diagram or evidence file.
 - Every node in the diagram has at least one row in the evidence appendix.
 - Explicitly list anything searched for but **not found**.

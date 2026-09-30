@@ -36,11 +36,18 @@ Follow the full workflow defined in the agent:
    non-AWS but a well-known product is evidenced (PostgreSQL, MySQL, MongoDB, Redis, Kafka, RabbitMQ, Docker,
    Kubernetes, etc.) → best-effort vendor logo shape from the draw.io shape panel; Tier 3 — no confident icon
    match → plain labeled shape. Every node's label must state the concrete product/version regardless of tier.
-6. Apply the agent's **Layout & Anti-Overlap Rules** exactly: minimum 280px icon pitch within a row, minimum
-   300px row-to-row pitch with a clear gap-lane, never a plain/default edge that skips over an intermediate
-   node in the same row (use bottom-anchored dip routing or explicit `<Array as="points">` waypoints instead),
-   a dedicated margin lane with explicit waypoints for any edge crossing more than one sibling container,
-   short (1-4 word) edge labels, and merging near-duplicate nodes/edges where evidence allows.
+   Include a visible top-of-page heading `<Module> Module` (e.g. `Customer Module`, `Agreement Module`) per the
+   agent's **Mandatory Diagram Heading** rule.
+6. Apply the agent's **Left-to-Right Column Layout** and **Layout & Anti-Overlap Rules** exactly (reference:
+   `diagrams/Agreement Module-current-architecture.drawio`): the diagram reads **left to right** — one vertical
+   column per layer in the order Experience & Identity → API Boundary → (Enterprise API hop) → Synchronous
+   Services → Data & Resilience State → Event & Integration Pipelines → External/Platform (CI/CD dashed container
+   below it), 40px gaps between columns used as edge bus lanes, one node per row inside a column with the icon
+   centred above a separate caption text vertex, legend in the bottom of the first column, connected nodes given
+   the same centre-y so edges are straight horizontals, fan-out/fan-in through bus lanes with explicit
+   `<Array as="points">` waypoints, same-column edges routed through side lanes (never through a caption),
+   short (1-4 word) edge labels, and near-duplicate nodes/edges merged where evidence allows. Write a
+   coordinate plan (per column: icon y, caption y/h, next y, centre-y) before authoring the XML.
 7. There is no local render/screenshot tool for `.drawio` files — run the agent's mandatory PowerShell
    self-check (well-formed XML, no duplicate ids, no dangling edge refs, no node-vs-node overlaps) and fix
    everything it flags before considering the file done. Tell the user this has been structurally/geometrically

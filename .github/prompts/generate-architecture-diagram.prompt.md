@@ -20,7 +20,9 @@ Follow the full workflow defined in the agent:
 4. Design the diagram using the layer groupings in the agent definition (Experience & Identity, API Boundary,
    Synchronous Services, Event & Integration Pipelines, Data & Resilience State, External Integrations &
    Platform Controls) — omit layers with no evidence rather than forcing content into them.
-5. Write the Mermaid source, render it locally with mermaid-cli using this folder's `mermaid.config.json` /
+5. Add a visible heading `<Module> Module` (e.g. `Customer Module`, `Agreement Module`) at the top of the
+   diagram per the agent's **Mandatory diagram heading** rule.
+   Write the Mermaid source, render it locally with mermaid-cli using this folder's `mermaid.config.json` /
    `puppeteer.config.json`, and visually validate (no overlaps, no clipped text, legend present).
 6. Produce the four required deliverables in the output folder:
    - `<Module> Module-current-architecture.mmd`

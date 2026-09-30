@@ -19,6 +19,14 @@ if (!process.env.GITHUB_TOKEN) {
 
 const DEFAULT_ORG = process.env.GITHUB_ORG || "rentacenter";
 
+// Mask the GitHub token (and any token-looking strings) in error text
+function redact(text) {
+  let out = String(text ?? "");
+  const token = process.env.GITHUB_TOKEN;
+  if (token) out = out.split(token).join("***");
+  return out.replace(/\b(gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,})\b/g, "***");
+}
+
 const server = new McpServer({
   name: "architecture-diagram-analysis-server",
   version: "1.0.0",
@@ -179,7 +187,7 @@ server.tool(
         }],
       };
     } catch (err) {
-      return { content: [{ type: "text", text: `Error: ${err.message}` }], isError: true };
+      return { content: [{ type: "text", text: `Error: ${redact(err.message)}` }], isError: true };
     }
   }
 );
@@ -199,7 +207,7 @@ server.tool(
       const content = Buffer.from(res.data.content, "base64").toString();
       return { content: [{ type: "text", text: content }] };
     } catch (err) {
-      return { content: [{ type: "text", text: `Error: ${err.message}` }], isError: true };
+      return { content: [{ type: "text", text: `Error: ${redact(err.message)}` }], isError: true };
     }
   }
 );
@@ -234,7 +242,7 @@ server.tool(
         content: [{ type: "text", text: JSON.stringify({ totalFiles: res.data.length, jsFiles: jsFiles.map((f) => f.name) }, null, 2) }],
       };
     } catch (err) {
-      return { content: [{ type: "text", text: `Error: ${err.message}` }], isError: true };
+      return { content: [{ type: "text", text: `Error: ${redact(err.message)}` }], isError: true };
     }
   }
 );
@@ -274,7 +282,7 @@ server.tool(
         }],
       };
     } catch (err) {
-      return { content: [{ type: "text", text: `Error: ${err.message}` }], isError: true };
+      return { content: [{ type: "text", text: `Error: ${redact(err.message)}` }], isError: true };
     }
   }
 );
@@ -338,7 +346,7 @@ server.tool(
           }],
         };
       } catch (err2) {
-        return { content: [{ type: "text", text: `Error: ${err2.message}` }], isError: true };
+        return { content: [{ type: "text", text: `Error: ${redact(err2.message)}` }], isError: true };
       }
     }
   }
@@ -386,7 +394,7 @@ server.tool(
         }],
       };
     } catch (err) {
-      return { content: [{ type: "text", text: `Error: ${err.message}` }], isError: true };
+      return { content: [{ type: "text", text: `Error: ${redact(err.message)}` }], isError: true };
     }
   }
 );
@@ -528,7 +536,7 @@ server.tool(
         }],
       };
     } catch (err) {
-      return { content: [{ type: "text", text: `Error: ${err.message}` }], isError: true };
+      return { content: [{ type: "text", text: `Error: ${redact(err.message)}` }], isError: true };
     }
   }
 );
@@ -628,7 +636,7 @@ server.tool(
         }],
       };
     } catch (err) {
-      return { content: [{ type: "text", text: `Error: ${err.message}` }], isError: true };
+      return { content: [{ type: "text", text: `Error: ${redact(err.message)}` }], isError: true };
     }
   }
 );
@@ -672,7 +680,7 @@ server.tool(
         }],
       };
     } catch (err) {
-      return { content: [{ type: "text", text: `Error: ${err.message}` }], isError: true };
+      return { content: [{ type: "text", text: `Error: ${redact(err.message)}` }], isError: true };
     }
   }
 );
@@ -713,7 +721,7 @@ server.tool(
         }],
       };
     } catch (err) {
-      return { content: [{ type: "text", text: `Error: ${err.message}` }], isError: true };
+      return { content: [{ type: "text", text: `Error: ${redact(err.message)}` }], isError: true };
     }
   }
 );
@@ -772,7 +780,7 @@ server.tool(
         }],
       };
     } catch (err) {
-      return { content: [{ type: "text", text: `Error: ${err.message}` }], isError: true };
+      return { content: [{ type: "text", text: `Error: ${redact(err.message)}` }], isError: true };
     }
   }
 );
@@ -846,7 +854,7 @@ server.tool(
         }],
       };
     } catch (err) {
-      return { content: [{ type: "text", text: `Error: ${err.message}` }], isError: true };
+      return { content: [{ type: "text", text: `Error: ${redact(err.message)}` }], isError: true };
     }
   }
 );
@@ -887,7 +895,7 @@ server.tool(
         }],
       };
     } catch (err) {
-      return { content: [{ type: "text", text: `Error: ${err.message}` }], isError: true };
+      return { content: [{ type: "text", text: `Error: ${redact(err.message)}` }], isError: true };
     }
   }
 );
@@ -935,7 +943,7 @@ server.tool(
         }],
       };
     } catch (err) {
-      return { content: [{ type: "text", text: `Error: ${err.message}` }], isError: true };
+      return { content: [{ type: "text", text: `Error: ${redact(err.message)}` }], isError: true };
     }
   }
 );
@@ -1012,7 +1020,7 @@ server.tool(
         }],
       };
     } catch (err) {
-      return { content: [{ type: "text", text: `Error: ${err.message}` }], isError: true };
+      return { content: [{ type: "text", text: `Error: ${redact(err.message)}` }], isError: true };
     }
   }
 );
@@ -1047,7 +1055,7 @@ server.tool(
     try {
       entries = readdirSync(targetDir, { withFileTypes: true });
     } catch (err) {
-      return { content: [{ type: "text", text: `Cannot read directory: ${err.message}` }], isError: true };
+      return { content: [{ type: "text", text: `Cannot read directory: ${redact(err.message)}` }], isError: true };
     }
 
     for (const entry of entries) {
@@ -1057,7 +1065,7 @@ server.tool(
         rmSync(fullPath, { force: true });
         deleted.push(entry.name);
       } catch (err) {
-        errors.push({ file: entry.name, error: err.message });
+        errors.push({ file: entry.name, error: redact(err.message) });
       }
     }
 

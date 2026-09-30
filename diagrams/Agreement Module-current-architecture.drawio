@@ -1,0 +1,315 @@
+<mxfile host="app.diagrams.net" agent="architecture-diagram-tool" version="24.0.0">
+  <diagram id="agreement-module-current-state" name="Agreement Module">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2000" pageHeight="1720" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- LAYER BACKGROUNDS -->
+        <mxCell id="bg_experience" value="Experience &amp; Identity" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EAF4FB;strokeColor=#2C79A8;verticalAlign=top;align=left;fontSize=14;fontStyle=1;spacingLeft=10;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="260" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="bg_api" value="API Boundary" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF4DD;strokeColor=#B8860B;verticalAlign=top;align=left;fontSize=14;fontStyle=1;spacingLeft=10;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="340" y="40" width="320" height="620" as="geometry" />
+        </mxCell>
+        <mxCell id="bg_gateway" value="Enterprise API Hop" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F6E9FF;strokeColor=#7A3FAE;verticalAlign=top;align=left;fontSize=14;fontStyle=1;spacingLeft=10;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="700" y="40" width="300" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="bg_sync" value="Synchronous Services (es_agreementcreate)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EAFBEA;strokeColor=#2F9E44;verticalAlign=top;align=left;fontSize=14;fontStyle=1;spacingLeft=10;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="40" width="480" height="580" as="geometry" />
+        </mxCell>
+        <mxCell id="bg_data" value="Data &amp; Resilience State" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EAF1FB;strokeColor=#2C5A9E;verticalAlign=top;align=left;fontSize=14;fontStyle=1;spacingLeft=10;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="660" width="480" height="980" as="geometry" />
+        </mxCell>
+        <mxCell id="bg_external" value="External Integrations &amp; Platform Controls" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDEAEA;strokeColor=#C0392B;verticalAlign=top;align=left;fontSize=14;fontStyle=1;spacingLeft=10;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="1560" y="40" width="340" height="920" as="geometry" />
+        </mxCell>
+        <mxCell id="bg_cicd" value="CI/CD" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F0FB;strokeColor=#6C4BB8;dashed=1;verticalAlign=top;align=left;fontSize=14;fontStyle=1;spacingLeft=10;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="1560" y="980" width="340" height="140" as="geometry" />
+        </mxCell>
+
+        <!-- LEGEND -->
+        <mxCell id="legend" value="Legend" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#666666;verticalAlign=top;align=left;fontSize=13;fontStyle=1;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="380" width="260" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="lg1" value="Experience &amp; Identity" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#EAF4FB;strokeColor=#2C79A8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="55" y="415" width="230" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="lg2" value="API Boundary" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF4DD;strokeColor=#B8860B;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="55" y="445" width="230" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="lg3" value="Enterprise API hop" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F6E9FF;strokeColor=#7A3FAE;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="55" y="475" width="230" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="lg4" value="Synchronous services" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#EAFBEA;strokeColor=#2F9E44;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="55" y="505" width="230" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="lg5" value="Data &amp; resilience state" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#EAF1FB;strokeColor=#2C5A9E;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="55" y="535" width="230" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="lg6" value="External integrations / platform" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FDEAEA;strokeColor=#C0392B;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="55" y="565" width="230" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="lg7" value="CI/CD deploy" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F3F0FB;strokeColor=#6C4BB8;dashed=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="55" y="595" width="230" height="24" as="geometry" />
+        </mxCell>
+
+        <!-- L1: EXPERIENCE AND IDENTITY -->
+        <mxCell id="browser" value="Store Associate Browser&lt;br&gt;RACPad Agreement app" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EAF4FB;strokeColor=#2C79A8;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="90" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="cf" value="CloudFront + S3&lt;br&gt;racpad_agreement SPA" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EAF4FB;strokeColor=#2C79A8;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="210" width="220" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- L2: API BOUNDARY -->
+        <mxCell id="apigw" value="" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F54749;gradientDirection=north;fillColor=#BC1356;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.api_gateway;" vertex="1" parent="1">
+          <mxGeometry x="461" y="90" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="apigw_label" value="Amazon API Gateway&lt;br&gt;racpad_agreement REST API" style="text;html=1;align=center;verticalAlign=top;fontSize=11;whiteSpace=wrap;overflow=hidden;" vertex="1" parent="1">
+          <mxGeometry x="360" y="174" width="280" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="bff" value="" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="461" y="254" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="bff_label" value="racpad_agreement BFF Lambda&lt;br&gt;single Lambda, ~55 controllers&lt;br&gt;(GetPriceQuoteCtrl,&lt;br&gt;CreateAgreementCtrl,&lt;br&gt;LegalInventoryPriceCtrl,&lt;br&gt;SearchCoCustomerCtrl, ...)" style="text;html=1;align=center;verticalAlign=top;fontSize=11;whiteSpace=wrap;overflow=hidden;" vertex="1" parent="1">
+          <mxGeometry x="360" y="338" width="280" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="errhandling" value="Error handling (all BFF repositories)&lt;br&gt;axios 400/404 -&amp;gt; BadRequest&lt;br&gt;other axios errors -&amp;gt; UnexpectedError&lt;br&gt;propagated back through API Gateway response" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF4DD;strokeColor=#B8860B;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="360" y="478" width="280" height="140" as="geometry" />
+        </mxCell>
+
+        <!-- L3: ENTERPRISE API HOP -->
+        <mxCell id="racapi" value="" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F54749;gradientDirection=north;fillColor=#BC1356;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.api_gateway;" vertex="1" parent="1">
+          <mxGeometry x="811" y="90" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="racapi_label" value="Enterprise RAC API&lt;br&gt;RAC_API_URL&lt;br&gt;owning gateway repo&lt;br&gt;not confirmed this pass" style="text;html=1;align=center;verticalAlign=top;fontSize=11;whiteSpace=wrap;overflow=hidden;" vertex="1" parent="1">
+          <mxGeometry x="720" y="174" width="260" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- L4: SYNCHRONOUS SERVICES -->
+        <mxCell id="pricequote" value="" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="1171" y="90" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="pricequote_label" value="GetPriceQuote Lambda&lt;br&gt;AJV validate, CircuitBreaker&lt;br&gt;calc rent/tax/initial payment" style="text;html=1;align=center;verticalAlign=top;fontSize=11;whiteSpace=wrap;overflow=hidden;" vertex="1" parent="1">
+          <mxGeometry x="1070" y="174" width="300" height="65" as="geometry" />
+        </mxCell>
+
+        <mxCell id="createagr" value="" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=#F78E04;gradientDirection=north;fillColor=#D05C17;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="1171" y="269" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="createagr_label" value="CreateAgreement Lambda&lt;br&gt;raw SQL via&lt;br&gt;DbConnection.getPgPool()&lt;br&gt;writes Agreement/Customer/&lt;br&gt;Inventory entities" style="text;html=1;align=center;verticalAlign=top;fontSize=11;whiteSpace=wrap;overflow=hidden;" vertex="1" parent="1">
+          <mxGeometry x="1070" y="353" width="300" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="otherfns" value="AddCoCustomer / UpdateClub /&lt;br&gt;UpdateLDW / UpdatePolicy /&lt;br&gt;ManageAgreement / GetClubQuote /&lt;br&gt;TransferClub Lambdas&lt;br&gt;(same CircuitBreaker + PG pattern)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EAFBEA;strokeColor=#2F9E44;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1070" y="473" width="300" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- L5: DATA AND RESILIENCE STATE -->
+        <mxCell id="rdsproxy" value="" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#527FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.rds_proxy_instance;" vertex="1" parent="1">
+          <mxGeometry x="1171" y="710" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="rdsproxy_label" value="RDS Proxy&lt;br&gt;RdsdbProxyHost /&lt;br&gt;RdsdbProxyArn&lt;br&gt;pools connections for&lt;br&gt;all es_agreementcreate&lt;br&gt;Lambdas" style="text;html=1;align=center;verticalAlign=top;fontSize=11;whiteSpace=wrap;overflow=hidden;" vertex="1" parent="1">
+          <mxGeometry x="1070" y="794" width="300" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="pg" value="" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#527FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.rds_postgresql_instance;" vertex="1" parent="1">
+          <mxGeometry x="1171" y="934" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="pg_label" value="RDS - PostgreSQL&lt;br&gt;RACDB: Agreement /&lt;br&gt;Customer / Inventory /&lt;br&gt;Fee / Status entities" style="text;html=1;align=center;verticalAlign=top;fontSize=11;whiteSpace=wrap;overflow=hidden;" vertex="1" parent="1">
+          <mxGeometry x="1070" y="1018" width="300" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="redis" value="" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#527FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.elasticache_for_redis;" vertex="1" parent="1">
+          <mxGeometry x="1171" y="1138" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="redis_label" value="ElastiCache - Redis&lt;br&gt;StoreProfile config cache&lt;br&gt;key: STOREPROFILECACHEKEY-&lt;br&gt;{storeNumber}&lt;br&gt;on cache miss: falls back&lt;br&gt;to origin call&lt;br&gt;(SKIP_ELASTICACHE env flag&lt;br&gt;can bypass cache)" style="text;html=1;align=center;verticalAlign=top;fontSize=11;whiteSpace=wrap;overflow=hidden;" vertex="1" parent="1">
+          <mxGeometry x="1070" y="1222" width="300" height="140" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dynamo" value="" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#527FFF;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.dynamodb;" vertex="1" parent="1">
+          <mxGeometry x="1171" y="1392" width="78" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="dynamo_label" value="DynamoDB&lt;br&gt;CircuitBreaker state table&lt;br&gt;fail/success threshold +&lt;br&gt;timeout (configurable),&lt;br&gt;toggled by&lt;br&gt;CircuitBreakerState param&lt;br&gt;(default disabled)" style="text;html=1;align=center;verticalAlign=top;fontSize=11;whiteSpace=wrap;overflow=hidden;" vertex="1" parent="1">
+          <mxGeometry x="1070" y="1476" width="300" height="140" as="geometry" />
+        </mxCell>
+
+        <!-- L6: EXTERNAL INTEGRATIONS AND PLATFORM CONTROLS -->
+        <mxCell id="legal" value="Legal Limits API&lt;br&gt;LEGALLIMITSURL&lt;br&gt;POST /legalengine/legallimit/validate&lt;br&gt;(PDF called this 'LegalEngine API')&lt;br&gt;errors surface as BadRequest (400/404)&lt;br&gt;or UnexpectedError (other) to the caller" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDEAEA;strokeColor=#C0392B;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1580" y="90" width="300" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="tax" value="Tax Engine&lt;br&gt;@rentacenter/ess-taxengine&lt;br&gt;TaxEngineService.CalculateTaxRequest&lt;br&gt;error surfaced as TAX_API_ERROR:&lt;br&gt;'Error in Tax Module call'" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDEAEA;strokeColor=#C0392B;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1580" y="220" width="300" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="okta" value="Okta Introspection&lt;br&gt;OktaIntrospectUrl&lt;br&gt;used by API Gateway custom authorizer&lt;br&gt;(no direct call edge drawn - platform control)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDEAEA;strokeColor=#C0392B;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1580" y="340" width="300" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="sns" value="" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#E7157B;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.simple_notification_service_sns;" vertex="1" parent="1">
+          <mxGeometry x="1650" y="450" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="sns_label" value="RacEventsSNSTopicARN&lt;br&gt;agreement lifecycle events" style="text;html=1;align=center;verticalAlign=top;fontSize=11;whiteSpace=wrap;overflow=hidden;" vertex="1" parent="1">
+          <mxGeometry x="1580" y="520" width="300" height="45" as="geometry" />
+        </mxCell>
+
+        <mxCell id="secrets" value="" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#DD344C;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.secrets_manager;" vertex="1" parent="1">
+          <mxGeometry x="1650" y="595" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="secrets_label" value="Secrets Manager + KMS&lt;br&gt;SecretmanagerArn / KmsKeyArn&lt;br&gt;used by all es_agreementcreate&lt;br&gt;Lambdas (platform control,&lt;br&gt;no direct call edge drawn)" style="text;html=1;align=center;verticalAlign=top;fontSize=11;whiteSpace=wrap;overflow=hidden;" vertex="1" parent="1">
+          <mxGeometry x="1580" y="665" width="300" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="observability" value="CloudWatch Logs + Lambda Insights +&lt;br&gt;AWS OTEL (Application Signals) + LaaS&lt;br&gt;Kinesis log shipping + VPC/Subnets/&lt;br&gt;LambdaSgId network placement.&lt;br&gt;LogRetention/LogLevel params control&lt;br&gt;verbosity" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDEAEA;strokeColor=#C0392B;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1580" y="785" width="300" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- L7: CI/CD -->
+        <mxCell id="cicd" value="CI/CD pipeline&lt;br&gt;Terraform-based deploy across dev/qa/uat/prod&lt;br&gt;(same pattern as Payment/Customer modules)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F0FB;strokeColor=#6C4BB8;dashed=1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1580" y="1000" width="300" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- EDGES: labels embedded on the edge value (auto-positioned, never manually placed).
+             Cross-cutting edges (e6, e9, e10, e11, e13, e16) use explicit dedicated routing lanes
+             (distinct x/y corridors that are provably clear of every unrelated node's bounding box)
+             so neither the edge line nor its auto-positioned label can ever pass through or land on
+             top of an unrelated node. Every node with more than one connection uses staggered
+             exitX/exitY or entryX/entryY fractions so multiple edges never share the same port. -->
+
+        <mxCell id="e1" value="Bearer JWT REST calls" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=10;exitX=1;exitY=0.5;entryX=0;entryY=0.5;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="browser" target="apigw">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e2" value="aws_proxy" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=10;exitX=0.5;exitY=1;entryX=1;entryY=0.5;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="apigw" target="bff">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="650" y="168" />
+              <mxPoint x="650" y="293" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e3" value="POST agreement/create/*, inventory/*" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=10;exitX=1;exitY=0.5;entryX=0;entryY=0.5;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="bff" target="racapi">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="700" y="293" />
+              <mxPoint x="700" y="129" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e4" value="price quote req" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=10;exitX=1;exitY=0.3;entryX=0;entryY=0.5;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="racapi" target="pricequote">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e5" value="create agreement req" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=10;exitX=1;exitY=0.9;entryX=0;entryY=0.7;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="racapi" target="createagr">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1010" y="162" />
+              <mxPoint x="1010" y="323" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- e6: racapi -> otherfns. Dips to y=460 (clear 30px gap between createagr_label bottom
+             at y=443 and otherfns top at y=473) before turning into otherfns, so it never crosses
+             createagr or its label. -->
+        <mxCell id="e6" value="other agreement ops" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=block;fontSize=10;exitX=0.2;exitY=1;entryX=0.2;entryY=0;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="racapi" target="otherfns">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1010" y="168" />
+              <mxPoint x="1010" y="460" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e7" value="validate item price" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=10;exitX=1;exitY=0.2;entryX=0;entryY=0.3;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="pricequote" target="legal">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e8" value="calculate tax" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=10;exitX=1;exitY=0.5;entryX=0;entryY=0.5;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="pricequote" target="tax">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- e9: pricequote -> redis via dedicated vertical lane x=1400 (clear of all label content,
+             which ends at x=1370, and clear of all icons, which end at x=1249). -->
+        <mxCell id="e9" value="cache-aside: store rules" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=block;fontSize=10;exitX=1;exitY=0.8;entryX=1;entryY=0.5;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="pricequote" target="redis">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1400" y="152" />
+              <mxPoint x="1400" y="1177" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- e10: createagr -> dynamo via dedicated vertical lane x=1430 (separate lane from e9/e11
+             so the two lines never run coincident). -->
+        <mxCell id="e10" value="circuit breaker check" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=block;fontSize=10;exitX=1;exitY=0.3;entryX=1;entryY=0.3;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="createagr" target="dynamo">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1430" y="292" />
+              <mxPoint x="1430" y="1415" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- e11: createagr -> rdsproxy via dedicated vertical lane x=1460 (its own lane, distinct
+             from e9/e10, so it cannot pass through otherfns even though otherfns sits directly
+             between createagr and rdsproxy in the same x-column). -->
+        <mxCell id="e11" value="pooled connection, saves agreement" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=10;exitX=1;exitY=0.7;entryX=1;entryY=0.3;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="createagr" target="rdsproxy">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1460" y="323" />
+              <mxPoint x="1460" y="733" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e12" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=10;exitX=1;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="rdsproxy" target="pg">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1490" y="749" />
+              <mxPoint x="1490" y="973" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- e13: pg -> sns, routed through the empty 40px gap between the Data column (ends x=1520)
+             and the External column (starts x=1560), well clear of legal/tax/okta which start at
+             x=1580. Uses its own x=1535 corridor, distinct from e16's x=1545 corridor, so the two
+             don't run coincident even though their y-ranges overlap. -->
+        <mxCell id="e13" value="publish agreement lifecycle event" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=block;fontSize=10;exitX=1;exitY=0.3;entryX=0;entryY=0.5;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="pg" target="sns">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1535" y="957" />
+              <mxPoint x="1535" y="480" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- e16: dynamo -> observability, own corridor x=1545. -->
+        <mxCell id="e16" value="traces / logs / metrics" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=block;fontSize=10;exitX=1;exitY=0.7;entryX=0;entryY=0.5;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="dynamo" target="observability">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1545" y="1447" />
+              <mxPoint x="1545" y="845" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e17" value="Terraform deploy" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=block;fontSize=10;exitX=0.5;exitY=1;entryX=0.5;entryY=0;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="observability" target="cicd">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e18" value="loads SPA" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=10;exitX=0.5;exitY=1;entryX=0.5;entryY=0;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="browser" target="cf">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

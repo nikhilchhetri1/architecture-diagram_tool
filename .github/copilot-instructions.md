@@ -91,6 +91,8 @@ Default org: **rentacenter**
 - **Always cite evidence** — every row in the `-architecture-evidence.md` appendix must have repo + path + (commit SHA when available).
 - **Do not silently change visual style** — if the user wants a diagram to match another module's look, first confirm the *source* Mermaid file for that reference exists in this workspace. If it does not, say so explicitly and ask the user to supply it — do not guess at hidden layout intent from a rendered image alone.
 - Clean up all `_*-probe.mmd/.png/.svg` scratch files once a diagram is agreed upon.
+- **Every diagram (Mermaid or draw.io) must have a visible heading `<Module> Module`** at the top — e.g.
+  `Customer Module`, `Agreement Module`, `Payment Module`.
 
 See [.github/agents/architecture-diagram.agent.md](.github/agents/architecture-diagram.agent.md) for the full
 evidence bar, naming rules, visual/rendering requirements, and required deliverable format.
