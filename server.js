@@ -19,6 +19,14 @@ if (!process.env.GITHUB_TOKEN) {
 
 const DEFAULT_ORG = process.env.GITHUB_ORG || "rentacenter";
 
+// Mask the GitHub token (and any token-looking strings) in error text
+function redact(text) {
+  let out = String(text ?? "");
+  const token = process.env.GITHUB_TOKEN;
+  if (token) out = out.split(token).join("***");
+  return out.replace(/\b(gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,})\b/g, "***");
+}
+
 const server = new McpServer({
   name: "architecture-diagram-analysis-server",
   version: "1.0.0",

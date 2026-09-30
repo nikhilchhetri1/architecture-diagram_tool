@@ -118,6 +118,23 @@ Group nodes into layers (adapt names to what evidence actually shows — do not 
 - Include a legend explaining any color/shape coding.
 - Label every edge with what actually flows across it (API call, event, query) when evidence supports a label.
 
+### Mandatory diagram heading
+
+- Every diagram **must** show a visible heading at the top of the rendered output in the form
+  `<Module> Module` (e.g. `Customer Module`, `Agreement Module`, `Payment Module`) — matching the `<Module>`
+  used in the deliverable file names.
+- For `flowchart`, add it via YAML front matter at the very top of the `.mmd` file:
+  ```
+  ---
+  title: Customer Module
+  ---
+  flowchart LR
+  ```
+  For `block-beta` (or any type where front-matter `title` does not render), add a single full-width
+  title node/block at the top of the diagram containing exactly the heading text instead.
+- Also set `accTitle` to the same heading where the diagram type supports it.
+- Confirm the heading is visible (not clipped/overlapped) in the rendered SVG and PNG before delivering.
+
 ### Anti-clutter layout rules (apply to every module diagram, not just complex ones)
 
 These rules exist because dense single-flowchart diagrams (e.g. many dashed edges fanning out from every node to
@@ -181,6 +198,7 @@ detail must still be retained — these rules govern **layout/grouping only**, n
 ## ✅ Validation Requirements Before Delivering
 
 - Mermaid syntax validated (no parse errors).
+- Diagram heading `<Module> Module` (e.g. `Customer Module`) is present and visible at the top.
 - Rendered SVG **and** high-resolution PNG both inspected: no overlapping nodes, no clipped text, no stray/duplicate legends.
 - The delivered PNG must be generated at high resolution (`-w 2400` or greater, `--scale 2` or greater) — confirm the actual pixel dimensions before declaring it final.
 - No secrets, tokens, account IDs, or internal URLs baked into the diagram or evidence file.
